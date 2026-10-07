@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "59741126492",
+    "project_id": "kegamarket-3b5fa",
+    "storage_bucket": "kegamarket-3b5fa.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:59741126492:android:084a98fe4d256e67720b99",
+        "android_client_info": {
+          "package_name": "com.kegamarket.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhneGWnKApnGHWpYsKuZK4H48ifbLLuMg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
