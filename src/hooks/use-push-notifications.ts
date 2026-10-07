@@ -26,11 +26,17 @@ export function usePushRegistration() {
 
     getPushToken()
       .then(async (token) => {
-        if (!token) return;
+        if (!token) {
+          if (__DEV__) console.warn('[push] no token: permission denied or not a physical device');
+          return;
+        }
         await devicesApi.register(token, Platform.OS as 'ios' | 'android');
         registeredToken = token;
+        if (__DEV__) console.log('[push] device registered', token);
       })
-      .catch(() => {});
+      .catch((error: unknown) => {
+        if (__DEV__) console.warn('[push] registration failed', error);
+      });
   }, [isSignedIn, isOnline]);
 }
 
