@@ -1,13 +1,12 @@
 import { useIsFetching, useQueryClient } from '@tanstack/react-query';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { CircleUserRound, CloudOff, Heart, PackageOpen } from 'lucide-react-native';
+import { CloudOff, PackageOpen } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import { RefreshControl, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useTabBarSpace } from '@/components/floating-tab-bar';
-import { IconButton } from '@/components/icon-button';
 import { InlineNotice } from '@/components/inline-notice';
 import { ListingCard, ListingCardSkeleton } from '@/components/listing-card';
 import { SearchBar } from '@/components/search-bar';
@@ -83,18 +82,6 @@ export function Home() {
             contentFit="contain"
             accessibilityLabel="Kega"
           />
-          <View className="flex-row gap-2.5">
-            <IconButton
-              icon={Heart}
-              accessibilityLabel={t('tabs.favorites')}
-              onPress={() => router.push('/favorites')}
-            />
-            <IconButton
-              icon={CircleUserRound}
-              accessibilityLabel={t('tabs.account')}
-              onPress={() => router.push('/account')}
-            />
-          </View>
         </View>
 
         <View className="mb-6 px-5">
