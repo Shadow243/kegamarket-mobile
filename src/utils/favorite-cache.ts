@@ -19,7 +19,11 @@ function patchPage(page: Paginated<PublicListing>, id: string, favorited: boolea
 }
 
 /** Sets `is_favorited` on one listing wherever it appears in a cached listings response. */
-export function patchFavorite<T extends ListingCacheEntry>(entry: T, id: string, favorited: boolean): T {
+export function patchFavorite<T extends ListingCacheEntry>(
+  entry: T,
+  id: string,
+  favorited: boolean,
+): T {
   if (!entry) return entry;
   if ('pages' in entry) {
     return { ...entry, pages: entry.pages.map((page) => patchPage(page, id, favorited)) } as T;

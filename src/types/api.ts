@@ -71,11 +71,21 @@ export interface ListingDetailResponse {
   contact_whatsapp_number: string | null;
 }
 
+export interface CategoryAttribute {
+  id: string;
+  key: string;
+  type: 'text' | 'number' | 'select' | 'boolean';
+  options: { value: string; label: string }[] | null;
+  unit: string | null;
+  label: string;
+}
+
 export interface Category {
   id: string;
   name: string;
   slug: string;
   icon: string | null;
+  attributes: CategoryAttribute[];
 }
 
 export interface CurrencyRates {

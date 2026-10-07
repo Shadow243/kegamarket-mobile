@@ -55,6 +55,8 @@ describe('toListingCard', () => {
   });
 
   it('falls back to the thumbnail when there are no photos', () => {
-    expect(toListingCard({ ...base, photos: [] }, 'en', usd).imageUrl).toBe('https://cdn/thumb.jpg');
+    expect(toListingCard({ ...base, photos: [] }, 'en', usd).imageUrl).toBe(
+      'https://cdn/thumb.jpg',
+    );
   });
 });

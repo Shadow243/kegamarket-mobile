@@ -32,7 +32,8 @@ export function useListingSearch(filters: ListingFilters) {
 
   return useInfiniteQuery({
     queryKey: [...queryKeys.listings.search(scoped, locale), 'infinite'],
-    queryFn: ({ pageParam, signal }) => listingsApi.list({ ...scoped, page: pageParam }, { signal }),
+    queryFn: ({ pageParam, signal }) =>
+      listingsApi.list({ ...scoped, page: pageParam }, { signal }),
     initialPageParam: 1,
     getNextPageParam: ({ meta }) =>
       meta.current_page < meta.last_page ? meta.current_page + 1 : undefined,

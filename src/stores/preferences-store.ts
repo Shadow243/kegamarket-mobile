@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -12,10 +12,12 @@ interface PreferencesState {
   currency: string;
   theme: ThemePreference;
   country: string | null;
+  hasSeenWelcome: boolean;
   setLocale: (locale: AppLocale) => void;
   setCurrency: (currency: string) => void;
   setTheme: (theme: ThemePreference) => void;
   setCountry: (country: string | null) => void;
+  completeWelcome: () => void;
 }
 
 export const usePreferencesStore = create<PreferencesState>()(
@@ -25,25 +27,30 @@ export const usePreferencesStore = create<PreferencesState>()(
       currency: DEFAULT_CURRENCY,
       theme: 'system',
       country: null,
+      hasSeenWelcome: false,
       setLocale: (locale) => set({ locale }),
       setCurrency: (currency) => set({ currency }),
       setTheme: (theme) => set({ theme }),
       setCountry: (country) => set({ country }),
+      completeWelcome: () => set({ hasSeenWelcome: true }),
     }),
     {
       name: 'kega-preferences',
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: ({ locale, currency, theme, country }) => ({ locale, currency, theme, country }),
+      partialize: ({ locale, currency, theme, country, hasSeenWelcome }) => ({
+        locale,
+        currency,
+        theme,
+        country,
+        hasSeenWelcome,
+      }),
     },
   ),
 );
 
 export function usePreferencesHydrated(): boolean {
-  const [hydrated, setHydrated] = useState(() => usePreferencesStore.persist.hasHydrated());
-  useEffect(() => {
-    const unsubscribe = usePreferencesStore.persist.onFinishHydration(() => setHydrated(true));
-    if (usePreferencesStore.persist.hasHydrated()) setHydrated(true);
-    return unsubscribe;
-  }, []);
-  return hydrated;
+  return useSyncExternalStore(
+    (onChange) => usePreferencesStore.persist.onFinishHydration(onChange),
+    () => usePreferencesStore.persist.hasHydrated(),
+  );
 }

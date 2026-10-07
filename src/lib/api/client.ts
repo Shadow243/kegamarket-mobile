@@ -62,12 +62,15 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
   if (response.status === 204) return undefined as T;
 
   const payload = (await response.json().catch(() => null)) as
-    | (T & { message?: string; errors?: ValidationErrors })
-    | null;
+    (T & { message?: string; errors?: ValidationErrors }) | null;
 
   if (!response.ok) {
     if (response.status === 401 && token) context.onUnauthorized();
-    throw new ApiError(payload?.message ?? `HTTP ${response.status}`, response.status, payload?.errors);
+    throw new ApiError(
+      payload?.message ?? `HTTP ${response.status}`,
+      response.status,
+      payload?.errors,
+    );
   }
 
   return payload as T;

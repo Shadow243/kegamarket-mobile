@@ -1,6 +1,10 @@
 export const fr = {
   tabs: { home: 'Accueil', search: 'Explorer', favorites: 'Favoris', account: 'Compte' },
   common: {
+    yes: 'Oui',
+    no: 'Non',
+    readMore: 'Lire la suite',
+    readLess: 'Réduire',
     seeAll: 'Tout voir',
     retry: 'Réessayer',
     cancel: 'Annuler',
@@ -16,11 +20,21 @@ export const fr = {
   network: {
     offline: 'Hors ligne — affichage des pages déjà consultées',
     backOnline: 'Connexion rétablie',
-    offlineUnavailable: 'Cette page n’a pas encore été consultée. Connectez-vous à Internet pour l’ouvrir.',
+    offlineUnavailable:
+      'Cette page n’a pas encore été consultée. Connectez-vous à Internet pour l’ouvrir.',
     paymentRequiresConnection: 'Le paiement nécessite une connexion Internet.',
     staleData: 'Mise à jour impossible. Données enregistrées affichées.',
   },
   home: {
+    heroEscrowTag: 'Paiement séquestre',
+    heroEscrowTitle: 'Achetez sans\nprendre de risque',
+    heroEscrowCta: 'Explorer',
+    heroHomeTag: 'Nouveautés',
+    heroHomeTitle: 'Votre intérieur,\nréinventé',
+    heroHomeCta: 'Découvrir',
+    trustEscrow: 'Paiement séquestré',
+    trustVerified: 'Vendeurs vérifiés',
+    trustModerated: 'Annonces contrôlées',
     searchPlaceholder: 'Que recherchez-vous ?',
     categories: 'Catégories',
     deals: 'Offres du moment',
@@ -31,6 +45,8 @@ export const fr = {
     empty: 'Aucune annonce pour le moment.',
   },
   search: {
+    clear: 'Effacer',
+    filters: 'Filtres',
     title: 'Explorer',
     placeholder: 'Rechercher une annonce',
     allCategories: 'Toutes',
@@ -47,6 +63,7 @@ export const fr = {
     },
   },
   listing: {
+    similar: 'Annonces similaires',
     sale: 'Promo',
     boosted: 'Premium',
     verified: 'Vérifié',
@@ -69,12 +86,14 @@ export const fr = {
     empty: 'Vous n’avez pas encore d’annonce favorite.',
     browse: 'Parcourir les annonces',
     guestTitle: 'Retrouvez vos coups de cœur',
-    guestBody: 'Connectez-vous pour sauvegarder des annonces et les retrouver sur tous vos appareils.',
+    guestBody:
+      'Connectez-vous pour sauvegarder des annonces et les retrouver sur tous vos appareils.',
   },
   account: {
     title: 'Compte',
     guestTitle: 'Bienvenue sur Kega',
-    guestBody: 'Connectez-vous pour acheter en sécurité, discuter avec les vendeurs et suivre vos commandes.',
+    guestBody:
+      'Connectez-vous pour acheter en sécurité, discuter avec les vendeurs et suivre vos commandes.',
     preferences: 'Préférences',
     language: 'Langue',
     currency: 'Devise',
@@ -102,6 +121,21 @@ export const fr = {
     createAccount: 'Créer un compte',
     forgotPassword: 'Mot de passe oublié ?',
     loginRequiresConnection: 'La connexion nécessite Internet.',
+  },
+  welcome: {
+    skip: 'Passer',
+    next: 'Suivant',
+    start: 'Commencer',
+    slide1Title: 'Achetez.\nVendez.\nEn confiance.',
+    slide1Body: 'Des milliers d’annonces vérifiées partout en Afrique.',
+    slide2Title: 'Votre argent\nest protégé.',
+    slide2Body: 'Le vendeur n’est payé qu’une fois l’article entre vos mains.',
+    slide3Title: 'Tout ce qu’il\nvous faut.',
+    slide3Body: 'Maison, véhicules, électronique, emploi… au même endroit.',
+    featureEscrow: 'Séquestre',
+    featureVerified: 'Vérifiés',
+    featureModerated: 'Contrôlées',
+    featureAfrica: 'Afrique',
   },
   time: { justNow: 'à l’instant' },
 };

@@ -9,7 +9,8 @@ export const queryKeys = {
   country: () => ['country', 'detect'] as const,
   listings: {
     all: ['listings'] as const,
-    search: (filters: ListingFilters, locale: string) => ['listings', 'search', filters, locale] as const,
+    search: (filters: ListingFilters, locale: string) =>
+      ['listings', 'search', filters, locale] as const,
     detail: (slug: string, locale: string) => ['listings', 'detail', slug, locale] as const,
     favorites: () => ['listings', 'favorites'] as const,
   },

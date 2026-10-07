@@ -31,38 +31,39 @@ export function convertAmount(
 type TimeUnit = 'minute' | 'hour' | 'day' | 'week' | 'month' | 'year';
 
 // Hermes ships no Intl.RelativeTimeFormat, so relative times are formatted by hand.
-const RELATIVE_TIME: Record<string, { now: string; yesterday: string } & Record<TimeUnit, string>> = {
-  fr: {
-    now: 'à l’instant',
-    yesterday: 'hier',
-    minute: 'il y a {n} min',
-    hour: 'il y a {n} h',
-    day: 'il y a {n} j',
-    week: 'il y a {n} sem.',
-    month: 'il y a {n} mois',
-    year: 'il y a {n} an',
-  },
-  en: {
-    now: 'just now',
-    yesterday: 'yesterday',
-    minute: '{n} min ago',
-    hour: '{n} h ago',
-    day: '{n} d ago',
-    week: '{n} wk ago',
-    month: '{n} mo ago',
-    year: '{n} yr ago',
-  },
-  ln: {
-    now: 'sikoyo',
-    yesterday: 'lobi',
-    minute: 'miniti {n} eleki',
-    hour: 'ngonga {n} eleki',
-    day: 'mikolo {n} eleki',
-    week: 'poso {n} eleki',
-    month: 'sanza {n} eleki',
-    year: 'mibu {n} eleki',
-  },
-};
+const RELATIVE_TIME: Record<string, { now: string; yesterday: string } & Record<TimeUnit, string>> =
+  {
+    fr: {
+      now: 'à l’instant',
+      yesterday: 'hier',
+      minute: 'il y a {n} min',
+      hour: 'il y a {n} h',
+      day: 'il y a {n} j',
+      week: 'il y a {n} sem.',
+      month: 'il y a {n} mois',
+      year: 'il y a {n} an',
+    },
+    en: {
+      now: 'just now',
+      yesterday: 'yesterday',
+      minute: '{n} min ago',
+      hour: '{n} h ago',
+      day: '{n} d ago',
+      week: '{n} wk ago',
+      month: '{n} mo ago',
+      year: '{n} yr ago',
+    },
+    ln: {
+      now: 'sikoyo',
+      yesterday: 'lobi',
+      minute: 'miniti {n} eleki',
+      hour: 'ngonga {n} eleki',
+      day: 'mikolo {n} eleki',
+      week: 'poso {n} eleki',
+      month: 'sanza {n} eleki',
+      year: 'mibu {n} eleki',
+    },
+  };
 
 const UNITS: { unit: TimeUnit; seconds: number }[] = [
   { unit: 'year', seconds: 365 * 24 * 3600 },
@@ -96,7 +97,10 @@ export function formatMonthYear(isoDate: string, locale: string): string {
 
 /** "Maison & Jardin" → "MJ", for avatar placeholders. */
 export function initials(name: string): string {
-  const words = name.trim().split(/\s+/).filter((word) => /[\p{L}\p{N}]/u.test(word));
+  const words = name
+    .trim()
+    .split(/\s+/)
+    .filter((word) => /[\p{L}\p{N}]/u.test(word));
   if (words.length === 0) return '?';
   if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
   return (words[0][0] + words[1][0]).toUpperCase();

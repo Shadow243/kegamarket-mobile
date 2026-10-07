@@ -18,7 +18,7 @@ import { AppProviders } from '@/components/app-providers';
 import { OfflineBanner } from '@/components/offline-banner';
 import { useScheme } from '@/hooks/use-theme';
 import { useAuthStore } from '@/stores/auth-store';
-import { usePreferencesHydrated } from '@/stores/preferences-store';
+import { usePreferencesHydrated, usePreferencesStore } from '@/stores/preferences-store';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -58,14 +58,20 @@ export default function RootLayout() {
 
 function RootStack() {
   const scheme = useScheme();
+  const hasSeenWelcome = usePreferencesStore((state) => state.hasSeenWelcome);
 
   return (
     <>
       <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="listing/[slug]" />
-        <Stack.Screen name="login" options={{ presentation: 'modal' }} />
+        <Stack.Protected guard={!hasSeenWelcome}>
+          <Stack.Screen name="welcome" options={{ animation: 'fade' }} />
+        </Stack.Protected>
+        <Stack.Protected guard={hasSeenWelcome}>
+          <Stack.Screen name="(tabs)" options={{ animation: 'fade' }} />
+          <Stack.Screen name="listing/[slug]" />
+          <Stack.Screen name="login" options={{ presentation: 'modal' }} />
+        </Stack.Protected>
       </Stack>
     </>
   );

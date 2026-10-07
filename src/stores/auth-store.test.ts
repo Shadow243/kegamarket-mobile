@@ -6,7 +6,9 @@ jest.mock('expo-secure-store', () => {
   const store = new Map<string, string>();
   return {
     getItemAsync: jest.fn((key: string) => Promise.resolve(store.get(key) ?? null)),
-    setItemAsync: jest.fn((key: string, value: string) => Promise.resolve(void store.set(key, value))),
+    setItemAsync: jest.fn((key: string, value: string) =>
+      Promise.resolve(void store.set(key, value)),
+    ),
     deleteItemAsync: jest.fn((key: string) => Promise.resolve(void store.delete(key))),
   };
 });
