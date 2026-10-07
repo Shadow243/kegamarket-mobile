@@ -121,6 +121,16 @@ export interface LoginPayload {
   password: string;
 }
 
+export interface RegisterPayload {
+  account_type: 'particulier' | 'professionnel';
+  name: string;
+  phone: string;
+  email: string;
+  password: string;
+  password_confirmation: string;
+  terms_accepted: boolean;
+}
+
 export interface LoginResponse {
   user: AuthUser;
   token: string;

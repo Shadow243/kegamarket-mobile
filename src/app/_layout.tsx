@@ -75,6 +75,8 @@ function RootStack() {
           <Stack.Screen name="(tabs)" options={{ animation: 'fade' }} />
           <Stack.Screen name="listing/[slug]" />
           <Stack.Screen name="login" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="register" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="forgot-password" />
           <Stack.Screen name="account" />
           <Stack.Screen
             name="settings/preference"

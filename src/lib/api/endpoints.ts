@@ -15,6 +15,7 @@ import type {
   Paginated,
   PaymentMethod,
   PublicListing,
+  RegisterPayload,
   SavedSearch,
   SavedSearchFilters,
 } from '@/types/api';
@@ -58,6 +59,10 @@ export const catalogApi = {
 export const authApi = {
   login: (payload: LoginPayload) =>
     request<LoginResponse>('/auth/login', { method: 'POST', body: payload }),
+  register: (payload: RegisterPayload) =>
+    request<{ user: AuthUser }>('/auth/register', { method: 'POST', body: payload }),
+  forgotPassword: (email: string) =>
+    request<{ message: string }>('/auth/forgot-password', { method: 'POST', body: { email } }),
   me: ({ signal }: Signal = {}) => request<AuthUser>('/auth/me', { signal }),
   logout: () => request<void>('/auth/logout', { method: 'POST' }),
 };
