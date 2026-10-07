@@ -20,10 +20,10 @@ export function ListingRail({
   if (!isLoading && listings.length === 0) return null;
 
   return (
-    <View className="mb-8">
+    <View className="mb-9">
       <SectionHeader title={title} actionLabel={seeAllLabel} onAction={onSeeAll} />
       {isLoading && listings.length === 0 ? (
-        <View className="flex-row gap-3 px-4">
+        <View className="flex-row gap-3 px-5">
           <ListingCardSkeleton layout="rail" />
           <ListingCardSkeleton layout="rail" />
           <ListingCardSkeleton layout="rail" />
@@ -35,7 +35,7 @@ export function ListingRail({
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <ListingCard listing={item} layout="rail" />}
           showsHorizontalScrollIndicator={false}
-          contentContainerClassName="gap-3 px-4"
+          contentContainerClassName="gap-3 px-5"
         />
       )}
     </View>

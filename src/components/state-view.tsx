@@ -17,7 +17,14 @@ export interface StateViewProps {
 }
 
 /** Empty, error and offline states: say why, then offer the next step. */
-export function StateView({ icon: Icon, title, body, actionLabel, onAction, className }: StateViewProps) {
+export function StateView({
+  icon: Icon,
+  title,
+  body,
+  actionLabel,
+  onAction,
+  className,
+}: StateViewProps) {
   const colors = useThemeColors();
 
   return (

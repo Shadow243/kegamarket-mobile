@@ -1,4 +1,4 @@
-import { ScrollView, Pressable, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 
 import { Skeleton } from '@/components/skeleton';
 import { Text } from '@/components/text';
@@ -21,12 +21,12 @@ export function CategoryStrip({
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
-      contentContainerClassName="gap-3 px-4"
+      contentContainerClassName="gap-4 px-5"
     >
       {isLoading && !categories
         ? Array.from({ length: 5 }, (_, index) => (
-            <View key={index} className="w-[76px] items-center gap-2">
-              <Skeleton className="h-16 w-16 rounded-2xl" />
+            <View key={index} className="w-[68px] items-center gap-2">
+              <Skeleton className="h-[68px] w-[68px] rounded-[22px]" />
               <Skeleton className="h-3 w-12" />
             </View>
           ))
@@ -38,15 +38,19 @@ export function CategoryStrip({
                 accessibilityRole="button"
                 accessibilityLabel={category.name}
                 onPress={() => onSelect(category.slug)}
-                className="w-[76px] items-center gap-2 active:opacity-70"
+                className="w-[68px] items-center gap-2 active:opacity-70"
               >
                 <View
-                  className="h-16 w-16 items-center justify-center rounded-2xl bg-brand-soft"
+                  className="h-[68px] w-[68px] items-center justify-center rounded-[22px] bg-surface-muted"
                   style={{ borderCurve: 'continuous' }}
                 >
-                  <Icon size={26} color={colors.brand} strokeWidth={1.9} />
+                  <Icon size={26} color={colors.fg} strokeWidth={1.75} />
                 </View>
-                <Text variant="caption" numberOfLines={2} className="text-center text-fg">
+                <Text
+                  variant="caption"
+                  numberOfLines={1}
+                  className="text-center text-[12px] text-fg"
+                >
                   {category.name}
                 </Text>
               </Pressable>

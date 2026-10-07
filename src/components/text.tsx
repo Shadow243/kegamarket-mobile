@@ -19,6 +19,7 @@ const tones = {
   subtle: 'text-fg-subtle',
   brand: 'text-brand',
   'on-brand': 'text-on-brand',
+  'on-action': 'text-on-action',
   danger: 'text-danger-fg',
   white: 'text-white',
 } as const;

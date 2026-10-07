@@ -9,7 +9,11 @@ import { signOutLocally } from '@/hooks/use-session';
 import { useApplyThemePreference, useScheme, useThemeColors } from '@/hooks/use-theme';
 import i18n, { resolveDeviceLocale } from '@/i18n';
 import { configureApiClient } from '@/lib/api/client';
-import { connectNetworkManagers, createQueryClient, persistOptions } from '@/lib/query/query-client';
+import {
+  connectNetworkManagers,
+  createQueryClient,
+  persistOptions,
+} from '@/lib/query/query-client';
 import { useAuthStore } from '@/stores/auth-store';
 import { usePreferencesStore } from '@/stores/preferences-store';
 import { themeVars } from '@/theme';

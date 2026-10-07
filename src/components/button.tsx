@@ -2,32 +2,44 @@ import type { LucideIcon } from 'lucide-react-native';
 import { ActivityIndicator, Pressable, View, type PressableProps } from 'react-native';
 
 import { useThemeColors } from '@/hooks/use-theme';
-import { palette } from '@/theme';
+import { night, type SemanticColor } from '@/theme';
 import { cn } from '@/utils/cn';
 
-import { Text, type TextTone } from './text';
+import { Text } from './text';
 
-const variants = {
-  primary: { container: 'bg-brand', tone: 'on-brand' },
-  accent: { container: 'bg-accent-400', tone: 'default' },
-  secondary: { container: 'bg-surface-muted', tone: 'default' },
-  outline: { container: 'border-[1.5px] border-line-strong bg-surface', tone: 'default' },
-  ghost: { container: 'bg-transparent', tone: 'brand' },
-} as const satisfies Record<string, { container: string; tone: TextTone }>;
+type Variant = 'primary' | 'accent' | 'secondary' | 'outline' | 'ghost' | 'light';
+
+const containers: Record<Variant, string> = {
+  primary: 'bg-action',
+  accent: 'bg-accent-400',
+  secondary: 'bg-surface-muted',
+  outline: 'border-[1.5px] border-line-strong bg-surface',
+  ghost: 'bg-transparent',
+  light: 'bg-white',
+};
+
+const contentColors: Record<Variant, SemanticColor | string> = {
+  primary: 'on-action',
+  accent: night[900],
+  secondary: 'fg',
+  outline: 'fg',
+  ghost: 'brand',
+  light: night[900],
+};
 
 const sizes = {
-  sm: 'h-10 px-4 gap-1.5',
-  md: 'h-12 px-5 gap-2',
-  lg: 'h-14 px-6 gap-2',
+  sm: 'h-10 px-4',
+  md: 'h-12 px-6',
+  lg: 'h-14 px-7',
 } as const;
 
 export interface ButtonProps extends Omit<PressableProps, 'children'> {
   title: string;
-  variant?: keyof typeof variants;
+  variant?: Variant;
   size?: keyof typeof sizes;
   icon?: LucideIcon;
+  trailingIcon?: LucideIcon;
   loading?: boolean;
-  fullWidth?: boolean;
   className?: string;
 }
 
@@ -36,16 +48,16 @@ export function Button({
   variant = 'primary',
   size = 'md',
   icon: Icon,
+  trailingIcon: TrailingIcon,
   loading = false,
   disabled = false,
-  fullWidth = false,
   className,
   ...props
 }: ButtonProps) {
   const colors = useThemeColors();
-  const { container, tone } = variants[variant];
-  const contentColor =
-    tone === 'on-brand' ? colors['on-brand'] : tone === 'brand' ? colors.brand : variant === 'accent' ? palette.primary[950] : colors.fg;
+  const token = contentColors[variant];
+  const color = token in colors ? colors[token as SemanticColor] : token;
+  const iconSize = size === 'sm' ? 16 : 18;
   const isDisabled = disabled || loading;
 
   return (
@@ -55,24 +67,23 @@ export function Button({
       accessibilityState={{ disabled: isDisabled, busy: loading }}
       disabled={isDisabled}
       className={cn(
-        'flex-row items-center justify-center rounded-2xl active:opacity-80',
-        container,
+        'flex-row items-center justify-center rounded-full active:opacity-85',
+        containers[variant],
         sizes[size],
-        fullWidth && 'self-stretch',
-        isDisabled && 'opacity-50',
+        isDisabled && 'opacity-45',
         className,
       )}
-      style={{ borderCurve: 'continuous' }}
       {...props}
     >
       {loading ? (
-        <ActivityIndicator color={contentColor} />
+        <ActivityIndicator color={color} />
       ) : (
         <View className="flex-row items-center gap-2">
-          {Icon ? <Icon size={size === 'sm' ? 16 : 18} color={contentColor} strokeWidth={2.25} /> : null}
-          <Text variant="callout" style={{ color: contentColor }} numberOfLines={1}>
+          {Icon ? <Icon size={iconSize} color={color} strokeWidth={2.25} /> : null}
+          <Text variant="callout" style={{ color }} numberOfLines={1}>
             {title}
           </Text>
+          {TrailingIcon ? <TrailingIcon size={iconSize} color={color} strokeWidth={2.25} /> : null}
         </View>
       )}
     </Pressable>

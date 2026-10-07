@@ -18,7 +18,7 @@ export function FavoriteButton({
   listingId: string;
   favorited: boolean;
   size?: number;
-  variant?: 'floating' | 'surface';
+  variant?: 'floating' | 'outline';
 }) {
   const { t } = useTranslation();
   const router = useRouter();

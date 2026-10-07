@@ -44,12 +44,11 @@ describe('formatTimeAgo', () => {
 
   it('does not rely on Intl.RelativeTimeFormat, which Hermes lacks', () => {
     const original = Intl.RelativeTimeFormat;
-    // @ts-expect-error simulating the Hermes runtime
-    delete Intl.RelativeTimeFormat;
+    Object.defineProperty(Intl, 'RelativeTimeFormat', { value: undefined, configurable: true });
     try {
       expect(formatTimeAgo('2026-10-04T12:00:00Z', 'fr', now)).toBe('il y a 3 j');
     } finally {
-      Intl.RelativeTimeFormat = original;
+      Object.defineProperty(Intl, 'RelativeTimeFormat', { value: original, configurable: true });
     }
   });
 

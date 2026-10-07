@@ -1,11 +1,9 @@
 import { Image } from 'expo-image';
 import { Link } from 'expo-router';
-import { MapPin } from 'lucide-react-native';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Pressable, View } from 'react-native';
 
-import { useThemeColors } from '@/hooks/use-theme';
 import { cn } from '@/utils/cn';
 import type { ListingCardModel } from '@/utils/listing-card';
 
@@ -13,7 +11,20 @@ import { FavoriteButton } from './favorite-button';
 import { Skeleton } from './skeleton';
 import { Text } from './text';
 
-export const RAIL_CARD_WIDTH = 168;
+export const RAIL_CARD_WIDTH = 164;
+const IMAGE_RATIO = 4 / 5;
+
+function Badge({ label, tone }: { label: string; tone: 'lime' | 'white' }) {
+  return (
+    <View
+      className={cn('rounded-full px-2.5 py-1', tone === 'lime' ? 'bg-accent-400' : 'bg-white')}
+    >
+      <Text variant="caption" className="font-body-bold text-[11px] leading-[14px] text-night-900">
+        {label}
+      </Text>
+    </View>
+  );
+}
 
 function ListingCardBase({
   listing,
@@ -23,19 +34,18 @@ function ListingCardBase({
   layout?: 'grid' | 'rail';
 }) {
   const { t } = useTranslation();
-  const colors = useThemeColors();
 
   return (
     <Link href={{ pathname: '/listing/[slug]', params: { slug: listing.slug } }} asChild>
       <Pressable
         accessibilityRole="link"
         accessibilityLabel={`${listing.title}, ${listing.price}, ${listing.city}`}
-        className={cn('active:opacity-85', layout === 'grid' ? 'flex-1' : '')}
+        className={cn('active:opacity-85', layout === 'grid' && 'flex-1')}
         style={layout === 'rail' ? { width: RAIL_CARD_WIDTH } : undefined}
       >
         <View
-          className="overflow-hidden rounded-2xl bg-surface-muted"
-          style={{ aspectRatio: 1, borderCurve: 'continuous' }}
+          className="overflow-hidden rounded-3xl bg-surface-muted"
+          style={{ aspectRatio: IMAGE_RATIO, borderCurve: 'continuous' }}
         >
           {listing.imageUrl ? (
             <Image
@@ -49,31 +59,24 @@ function ListingCardBase({
             />
           ) : null}
 
-          <View className="absolute left-2 top-2 flex-row gap-1">
-            {listing.discount ? (
-              <View className="rounded-full bg-danger-500 px-2 py-0.5">
-                <Text variant="label" tone="white">
-                  {listing.discount}
-                </Text>
-              </View>
-            ) : null}
-            {listing.isBoosted ? (
-              <View className="rounded-full bg-accent-400 px-2 py-0.5">
-                <Text variant="label" className="text-primary-950">
-                  {t('listing.boosted')}
-                </Text>
-              </View>
-            ) : null}
-          </View>
-
-          <View className="absolute right-2 top-2">
+          <View className="absolute right-2.5 top-2.5">
             <FavoriteButton listingId={listing.id} favorited={listing.isFavorited} />
           </View>
+
+          {listing.discount || listing.isBoosted ? (
+            <View className="absolute bottom-2.5 left-2.5 flex-row gap-1.5">
+              {listing.discount ? <Badge label={listing.discount} tone="lime" /> : null}
+              {listing.isBoosted ? <Badge label={t('listing.boosted')} tone="white" /> : null}
+            </View>
+          ) : null}
         </View>
 
-        <View className="gap-0.5 px-0.5 pt-2.5">
-          <View className="flex-row flex-wrap items-baseline gap-x-1.5">
-            <Text variant="price" tone="brand" numberOfLines={1}>
+        <View className="px-1 pt-3">
+          <Text variant="caption" className="font-body-semibold text-fg" numberOfLines={1}>
+            {listing.title}
+          </Text>
+          <View className="mt-1 flex-row flex-wrap items-baseline gap-x-1.5">
+            <Text variant="price" numberOfLines={1}>
               {listing.price}
             </Text>
             {listing.oldPrice ? (
@@ -82,20 +85,11 @@ function ListingCardBase({
               </Text>
             ) : null}
           </View>
-          {listing.convertedPrice ? (
-            <Text variant="caption" tone="muted" numberOfLines={1}>
-              {t('listing.approx', { price: listing.convertedPrice })}
-            </Text>
-          ) : null}
-          <Text variant="callout" numberOfLines={2} className="mt-0.5">
-            {listing.title}
+          <Text variant="caption" tone="subtle" numberOfLines={1} className="mt-0.5 text-[12px]">
+            {listing.convertedPrice
+              ? `${t('listing.approx', { price: listing.convertedPrice })} · ${listing.city}`
+              : `${listing.city} · ${listing.timeAgo}`}
           </Text>
-          <View className="mt-1 flex-row items-center gap-1">
-            <MapPin size={12} color={colors['fg-subtle']} strokeWidth={2.25} />
-            <Text variant="caption" tone="subtle" numberOfLines={1} className="flex-1">
-              {listing.city} · {listing.timeAgo}
-            </Text>
-          </View>
         </View>
       </Pressable>
     </Link>
@@ -110,10 +104,9 @@ export function ListingCardSkeleton({ layout = 'grid' }: { layout?: 'grid' | 'ra
       className={layout === 'grid' ? 'flex-1' : ''}
       style={layout === 'rail' ? { width: RAIL_CARD_WIDTH } : undefined}
     >
-      <Skeleton className="aspect-square w-full rounded-2xl" />
-      <Skeleton className="mt-3 h-4 w-2/3" />
-      <Skeleton className="mt-2 h-3.5 w-full" />
-      <Skeleton className="mt-2 h-3 w-1/2" />
+      <Skeleton className="w-full rounded-3xl" style={{ aspectRatio: IMAGE_RATIO }} />
+      <Skeleton className="mt-3 h-3.5 w-4/5" />
+      <Skeleton className="mt-2 h-4 w-1/2" />
     </View>
   );
 }

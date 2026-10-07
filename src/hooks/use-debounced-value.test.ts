@@ -6,16 +6,17 @@ describe('useDebouncedValue', () => {
   beforeEach(() => jest.useFakeTimers());
   afterEach(() => jest.useRealTimers());
 
-  it('only publishes the last value once typing pauses', () => {
-    const { result, rerender } = renderHook(({ value }) => useDebouncedValue(value, 300), {
-      initialProps: { value: 'f' },
-    });
+  it('only publishes the last value once typing pauses', async () => {
+    const { result, rerender } = await renderHook(
+      ({ value }: { value: string }) => useDebouncedValue(value, 300),
+      { initialProps: { value: 'f' } },
+    );
 
-    rerender({ value: 'fri' });
-    rerender({ value: 'frigo' });
+    await rerender({ value: 'fri' });
+    await rerender({ value: 'frigo' });
     expect(result.current).toBe('f');
 
-    act(() => jest.advanceTimersByTime(300));
+    await act(() => jest.advanceTimersByTime(300));
     expect(result.current).toBe('frigo');
   });
 });

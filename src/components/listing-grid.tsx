@@ -18,6 +18,7 @@ export interface ListingGridProps {
   onEndReached?: () => void;
   header?: ReactElement;
   empty?: ReactElement;
+  bottomInset?: number;
 }
 
 export function ListingGrid({
@@ -29,6 +30,7 @@ export function ListingGrid({
   onEndReached,
   header,
   empty,
+  bottomInset = 24,
 }: ListingGridProps) {
   const colors = useThemeColors();
 
@@ -36,7 +38,7 @@ export function ListingGrid({
     return (
       <View className="flex-1">
         {header}
-        <View className="flex-row flex-wrap gap-x-3 gap-y-6 px-4 pt-2">
+        <View className="flex-row flex-wrap justify-between gap-y-7 px-5 pt-2">
           {Array.from({ length: SKELETON_COUNT }, (_, index) => (
             <View key={index} style={{ width: '48%' }}>
               <ListingCardSkeleton />
@@ -53,7 +55,7 @@ export function ListingGrid({
       numColumns={2}
       keyExtractor={(item) => item.id}
       renderItem={({ item, index }) => (
-        <View className={index % 2 === 0 ? 'pb-6 pl-4 pr-1.5' : 'pb-6 pl-1.5 pr-4'}>
+        <View className={index % 2 === 0 ? 'pb-7 pl-5 pr-1.5' : 'pb-7 pl-1.5 pr-5'}>
           <ListingCard listing={item} />
         </View>
       )}
@@ -67,10 +69,15 @@ export function ListingGrid({
       keyboardDismissMode="on-drag"
       refreshControl={
         onRefresh ? (
-          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={colors.brand} colors={[colors.brand]} />
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.brand}
+            colors={[colors.brand]}
+          />
         ) : undefined
       }
-      contentContainerStyle={{ paddingBottom: 24 }}
+      contentContainerStyle={{ paddingBottom: bottomInset }}
     />
   );
 }

@@ -1,6 +1,6 @@
 import type { Config } from 'tailwindcss';
 
-import { palette, semantic } from './src/theme/palette';
+import { night, palette, semantic } from './src/theme/palette';
 
 const semanticColors = Object.fromEntries(
   Object.keys(semantic.light).map((name) => [name, `var(--color-${name})`]),
@@ -18,6 +18,7 @@ export default {
         danger: palette.danger,
         success: palette.success,
         warning: palette.warning,
+        night,
         ...semanticColors,
       },
       fontFamily: {

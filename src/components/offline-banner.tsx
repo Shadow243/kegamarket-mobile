@@ -1,5 +1,5 @@
 import { CloudOff, Wifi } from 'lucide-react-native';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import Animated, { FadeInUp, FadeOutUp } from 'react-native-reanimated';
@@ -17,21 +17,20 @@ export function OfflineBanner() {
   const { t } = useTranslation();
   const isOnline = useIsOnline();
   const insets = useSafeAreaInsets();
-  const wasOffline = useRef(false);
+  const [previousOnline, setPreviousOnline] = useState(isOnline);
   const [showBackOnline, setShowBackOnline] = useState(false);
 
+  // Derive the transition during render (offline -> online) instead of in an effect.
+  if (isOnline !== previousOnline) {
+    setPreviousOnline(isOnline);
+    setShowBackOnline(isOnline);
+  }
+
   useEffect(() => {
-    if (!isOnline) {
-      wasOffline.current = true;
-      setShowBackOnline(false);
-      return;
-    }
-    if (!wasOffline.current) return;
-    wasOffline.current = false;
-    setShowBackOnline(true);
+    if (!showBackOnline) return;
     const timer = setTimeout(() => setShowBackOnline(false), BACK_ONLINE_DURATION);
     return () => clearTimeout(timer);
-  }, [isOnline]);
+  }, [showBackOnline]);
 
   if (isOnline && !showBackOnline) return null;
 
@@ -49,7 +48,11 @@ export function OfflineBanner() {
       <View
         accessibilityRole="alert"
         accessibilityLiveRegion="polite"
-        className={offline ? 'flex-row items-center gap-2 rounded-full bg-ink-900 px-4 py-2.5' : 'flex-row items-center gap-2 rounded-full bg-success-600 px-4 py-2.5'}
+        className={
+          offline
+            ? 'flex-row items-center gap-2 rounded-full bg-night-900 px-4 py-2.5'
+            : 'flex-row items-center gap-2 rounded-full bg-success-600 px-4 py-2.5'
+        }
       >
         <Icon size={16} color={palette.white} strokeWidth={2.25} />
         <Text variant="caption" tone="white">

@@ -2,7 +2,7 @@ import { vars } from 'nativewind';
 
 import { semantic, type ColorScheme } from './palette';
 
-export { palette, semantic, type ColorScheme, type SemanticColor } from './palette';
+export { night, palette, semantic, type ColorScheme, type SemanticColor } from './palette';
 
 function toCssVars(scheme: ColorScheme) {
   return vars(

@@ -2,39 +2,47 @@ import { Tabs } from 'expo-router';
 import { CircleUserRound, Heart, House, Search } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 
-import { useThemeColors } from '@/hooks/use-theme';
+import { FloatingTabBar } from '@/components/floating-tab-bar';
 
 export default function TabsLayout() {
   const { t } = useTranslation();
-  const colors = useThemeColors();
 
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: colors.brand,
-        tabBarInactiveTintColor: colors['fg-subtle'],
-        tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.line },
-        tabBarLabelStyle: { fontFamily: 'Manrope_600SemiBold', fontSize: 11 },
-      }}
-    >
+    <Tabs screenOptions={{ headerShown: false }} tabBar={(props) => <FloatingTabBar {...props} />}>
       <Tabs.Screen
         name="index"
-        options={{ title: t('tabs.home'), tabBarIcon: ({ color, size }) => <House color={color} size={size} /> }}
+        options={{
+          title: t('tabs.home'),
+          tabBarIcon: ({ color, focused }) => (
+            <House color={color} size={22} strokeWidth={focused ? 2.4 : 2} />
+          ),
+        }}
       />
       <Tabs.Screen
         name="search"
-        options={{ title: t('tabs.search'), tabBarIcon: ({ color, size }) => <Search color={color} size={size} /> }}
+        options={{
+          title: t('tabs.search'),
+          tabBarIcon: ({ color, focused }) => (
+            <Search color={color} size={22} strokeWidth={focused ? 2.4 : 2} />
+          ),
+        }}
       />
       <Tabs.Screen
         name="favorites"
-        options={{ title: t('tabs.favorites'), tabBarIcon: ({ color, size }) => <Heart color={color} size={size} /> }}
+        options={{
+          title: t('tabs.favorites'),
+          tabBarIcon: ({ color, focused }) => (
+            <Heart color={color} size={22} strokeWidth={focused ? 2.4 : 2} />
+          ),
+        }}
       />
       <Tabs.Screen
         name="account"
         options={{
           title: t('tabs.account'),
-          tabBarIcon: ({ color, size }) => <CircleUserRound color={color} size={size} />,
+          tabBarIcon: ({ color, focused }) => (
+            <CircleUserRound color={color} size={22} strokeWidth={focused ? 2.4 : 2} />
+          ),
         }}
       />
     </Tabs>

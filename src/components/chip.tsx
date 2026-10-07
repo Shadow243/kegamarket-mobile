@@ -18,7 +18,7 @@ export function Chip({
   onPress: () => void;
 }) {
   const colors = useThemeColors();
-  const color = selected ? colors['on-brand'] : colors.fg;
+  const color = selected ? colors['on-action'] : colors.fg;
 
   return (
     <Pressable
@@ -26,12 +26,12 @@ export function Chip({
       accessibilityState={{ selected }}
       onPress={onPress}
       className={cn(
-        'h-9 flex-row items-center gap-1.5 rounded-full border px-3.5 active:opacity-70',
-        selected ? 'border-brand bg-brand' : 'border-line bg-surface',
+        'h-10 flex-row items-center gap-1.5 rounded-full px-[18px] active:opacity-75',
+        selected ? 'bg-action' : 'bg-surface-muted',
       )}
     >
       {Icon ? <Icon size={15} color={color} strokeWidth={2.25} /> : null}
-      <Text variant="caption" style={{ color }}>
+      <Text variant="caption" className="font-body-semibold" style={{ color }}>
         {label}
       </Text>
     </Pressable>

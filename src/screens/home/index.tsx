@@ -1,35 +1,47 @@
 import { useIsFetching, useQueryClient } from '@tanstack/react-query';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { CloudOff, PackageOpen, Search } from 'lucide-react-native';
+import { CircleUserRound, CloudOff, Heart, PackageOpen } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
-import { Pressable, RefreshControl, ScrollView, View } from 'react-native';
+import { RefreshControl, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useTabBarSpace } from '@/components/floating-tab-bar';
+import { IconButton } from '@/components/icon-button';
 import { InlineNotice } from '@/components/inline-notice';
 import { ListingCard, ListingCardSkeleton } from '@/components/listing-card';
+import { SearchBar } from '@/components/search-bar';
 import { SectionHeader } from '@/components/section-header';
 import { StateView } from '@/components/state-view';
-import { Text } from '@/components/text';
 import { useCategories } from '@/hooks/use-catalog';
 import { useIsOnline } from '@/hooks/use-is-online';
 import { useListingCards } from '@/hooks/use-listing-cards';
 import { useListingFeed } from '@/hooks/use-listings';
-import { useThemeColors } from '@/hooks/use-theme';
+import { useScheme, useThemeColors } from '@/hooks/use-theme';
 import type { ListingSort } from '@/lib/api/endpoints';
 
 import { CategoryStrip } from './category-strip';
-import { EscrowCard } from './escrow-card';
+import { HeroCarousel } from './hero-carousel';
 import { ListingRail } from './listing-rail';
+import { TrustStrip } from './trust-strip';
 
-const logo = require('@/assets/images/logo-kega.png');
+const logos = {
+  light: require('@/assets/images/logo-kega.png'),
+  dark: require('@/assets/images/logo-kega-light.png'),
+};
+
+const HOME_CATEGORY = 'maison-jardin';
+
+type SearchParams = { category?: string; sort?: ListingSort; on_sale?: string; filters?: string };
 
 export function Home() {
   const { t } = useTranslation();
   const router = useRouter();
+  const scheme = useScheme();
   const colors = useThemeColors();
   const queryClient = useQueryClient();
   const isOnline = useIsOnline();
+  const bottomSpace = useTabBarSpace();
 
   const categories = useCategories();
   const recent = useListingFeed({});
@@ -41,8 +53,7 @@ export function Home() {
   const popularCards = useListingCards(popular.data);
   const isRefreshing = useIsFetching({ queryKey: ['listings'] }) > 0 && !recent.isLoading;
 
-  const openSearch = (params: { category?: string; sort?: ListingSort; on_sale?: string } = {}) =>
-    router.push({ pathname: '/search', params });
+  const openSearch = (params: SearchParams = {}) => router.push({ pathname: '/search', params });
 
   const refresh = () =>
     Promise.all([
@@ -51,7 +62,6 @@ export function Home() {
     ]);
 
   const hasNoData = recent.data === undefined;
-  const showBlockingState = hasNoData && !recent.isLoading;
 
   return (
     <SafeAreaView edges={['top']} className="flex-1 bg-canvas">
@@ -60,32 +70,50 @@ export function Home() {
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={refresh}
-            tintColor={colors.brand}
+            tintColor={colors.fg}
             colors={[colors.brand]}
           />
         }
-        contentContainerClassName="pb-8"
+        contentContainerStyle={{ paddingBottom: bottomSpace }}
       >
-        <View className="flex-row items-center justify-between px-4 pb-4 pt-2">
+        <View className="flex-row items-center justify-between px-5 pb-5 pt-2">
           <Image
-            source={logo}
-            className="h-7 w-[96px]"
+            source={logos[scheme]}
+            className="h-[26px] w-[90px]"
             contentFit="contain"
             accessibilityLabel="Kega"
           />
+          <View className="flex-row gap-2.5">
+            <IconButton
+              icon={Heart}
+              accessibilityLabel={t('tabs.favorites')}
+              onPress={() => router.push('/favorites')}
+            />
+            <IconButton
+              icon={CircleUserRound}
+              accessibilityLabel={t('tabs.account')}
+              onPress={() => router.push('/account')}
+            />
+          </View>
         </View>
 
-        <Pressable
-          accessibilityRole="search"
-          onPress={() => openSearch()}
-          className="mx-4 mb-6 h-[52px] flex-row items-center gap-3 rounded-2xl border border-line bg-surface px-4 active:opacity-80"
-          style={{ borderCurve: 'continuous' }}
-        >
-          <Search size={20} color={colors['fg-muted']} />
-          <Text tone="subtle">{t('home.searchPlaceholder')}</Text>
-        </Pressable>
+        <View className="mb-6 px-5">
+          <SearchBar
+            placeholder={t('home.searchPlaceholder')}
+            onPress={() => openSearch()}
+            onFilterPress={() => openSearch({ filters: '1' })}
+          />
+        </View>
 
         <View className="mb-8">
+          <HeroCarousel
+            onExplore={() => openSearch()}
+            onHome={() => openSearch({ category: HOME_CATEGORY })}
+          />
+        </View>
+
+        <SectionHeader title={t('home.categories')} />
+        <View className="mb-9">
           <CategoryStrip
             categories={categories.data}
             isLoading={categories.isLoading}
@@ -93,9 +121,7 @@ export function Home() {
           />
         </View>
 
-        <EscrowCard />
-
-        {showBlockingState ? (
+        {hasNoData && !recent.isLoading ? (
           isOnline ? (
             <StateView
               icon={PackageOpen}
@@ -108,7 +134,7 @@ export function Home() {
           )
         ) : (
           <>
-            {recent.isError && !hasNoData ? (
+            {recent.isError ? (
               <InlineNotice
                 message={t('network.staleData')}
                 actionLabel={t('common.retry')}
@@ -137,7 +163,7 @@ export function Home() {
               onAction={() => openSearch({ sort: 'newest' })}
             />
             {recent.isLoading ? (
-              <View className="flex-row flex-wrap justify-between gap-y-6 px-4">
+              <View className="flex-row flex-wrap justify-between gap-y-7 px-5">
                 {Array.from({ length: 4 }, (_, index) => (
                   <View key={index} style={{ width: '48%' }}>
                     <ListingCardSkeleton />
@@ -147,7 +173,7 @@ export function Home() {
             ) : recentCards.length === 0 ? (
               <StateView icon={PackageOpen} title={t('home.empty')} />
             ) : (
-              <View className="flex-row flex-wrap justify-between gap-y-6 px-4">
+              <View className="flex-row flex-wrap justify-between gap-y-7 px-5">
                 {recentCards.map((listing) => (
                   <View key={listing.id} style={{ width: '48%' }}>
                     <ListingCard listing={listing} />
@@ -157,6 +183,10 @@ export function Home() {
             )}
           </>
         )}
+
+        <View className="mt-10">
+          <TrustStrip />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
