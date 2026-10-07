@@ -1,9 +1,12 @@
 import Echo from 'laravel-echo';
-import Pusher from 'pusher-js/react-native';
+import PusherExport from 'pusher-js/react-native';
 import type { ChannelAuthorizationCallback } from 'pusher-js/types/src/core/auth/options';
 
 import { broadcastingApi } from '@/lib/api/endpoints';
 import { REVERB } from '@/lib/config';
+
+// pusher-js 8's React Native build sets `module.exports.Pusher`, despite typings declaring a default export.
+const Pusher = (PusherExport as unknown as { Pusher?: typeof PusherExport }).Pusher ?? PusherExport;
 
 type ReverbEcho = Echo<'reverb'>;
 
@@ -14,7 +17,17 @@ export function getEcho(): ReverbEcho | null {
   if (!REVERB.key || !REVERB.host) return null;
   if (echo) return echo;
 
-  echo = new Echo({
+  try {
+    echo = createEcho();
+  } catch {
+    return null;
+  }
+
+  return echo;
+}
+
+function createEcho(): ReverbEcho {
+  return new Echo({
     broadcaster: 'reverb',
     Pusher,
     key: REVERB.key,
@@ -33,8 +46,6 @@ export function getEcho(): ReverbEcho | null {
       },
     }),
   });
-
-  return echo;
 }
 
 export function disconnectEcho() {
