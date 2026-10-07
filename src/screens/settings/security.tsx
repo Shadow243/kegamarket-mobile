@@ -13,7 +13,7 @@ import { useUpdatePassword } from '@/hooks/use-profile';
 import { formLevelError, isApiError } from '@/lib/api/errors';
 
 import { createPasswordSchema, type PasswordForm } from './schemas';
-import { useFormMessages } from './use-form-messages';
+import { useFormMessages } from '@/hooks/use-form-messages';
 
 const EMPTY: PasswordForm = { current_password: '', password: '', password_confirmation: '' };
 

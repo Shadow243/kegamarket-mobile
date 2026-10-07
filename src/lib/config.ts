@@ -7,3 +7,10 @@ export type AppLocale = (typeof SUPPORTED_LOCALES)[number];
 export const DEFAULT_LOCALE: AppLocale = 'fr';
 
 export const DEFAULT_CURRENCY = 'USD';
+
+export const REVERB = {
+  key: process.env.EXPO_PUBLIC_REVERB_APP_KEY ?? '',
+  host: process.env.EXPO_PUBLIC_REVERB_HOST ?? '',
+  port: Number(process.env.EXPO_PUBLIC_REVERB_PORT ?? 443),
+  scheme: process.env.EXPO_PUBLIC_REVERB_SCHEME ?? 'https',
+};

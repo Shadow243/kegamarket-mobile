@@ -1,5 +1,4 @@
 import { useRouter } from 'expo-router';
-import * as WebBrowser from 'expo-web-browser';
 import {
   ArrowLeft,
   CloudOff,
@@ -11,7 +10,15 @@ import {
 } from 'lucide-react-native';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Linking, Pressable, ScrollView, Share, View, useWindowDimensions } from 'react-native';
+import {
+  Alert,
+  Linking,
+  Pressable,
+  ScrollView,
+  Share,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/button';
@@ -24,10 +31,12 @@ import { useCategories } from '@/hooks/use-catalog';
 import { useCurrency } from '@/hooks/use-currency';
 import { useIsOnline } from '@/hooks/use-is-online';
 import { useListingDetail } from '@/hooks/use-listings';
+import { useCreateOrder } from '@/hooks/use-orders';
 import { useLocale } from '@/hooks/use-locale';
 import { useThemeColors } from '@/hooks/use-theme';
-import { isApiError } from '@/lib/api/errors';
+import { errorMessage, isApiError } from '@/lib/api/errors';
 import { SITE_URL } from '@/lib/config';
+import { useAuthStore } from '@/stores/auth-store';
 import { palette } from '@/theme';
 import { formatPrice, formatTimeAgo } from '@/utils/format';
 import { listingSpecs } from '@/utils/listing-specs';
@@ -65,6 +74,8 @@ export function ListingDetailScreen({ slug }: { slug: string }) {
   const detail = useListingDetail(slug);
   const categories = useCategories();
   const currency = useCurrency();
+  const createOrder = useCreateOrder();
+  const isSignedIn = useAuthStore((state) => state.token !== null);
   const listing = detail.data?.listing;
   const whatsapp = detail.data?.contact_whatsapp_number;
 
@@ -81,6 +92,22 @@ export function ListingDetailScreen({ slug }: { slug: string }) {
 
   const webUrl = `${SITE_URL}${locale === 'fr' ? '' : `/${locale}`}/listing/${slug}`;
   const goBack = () => (router.canGoBack() ? router.back() : router.replace('/'));
+
+  const buy = () => {
+    if (!listing || createOrder.isPending) return;
+    if (!isSignedIn) {
+      router.push('/login');
+      return;
+    }
+    createOrder.mutate(listing.id, {
+      onSuccess: (order) => router.push({ pathname: '/orders/[id]', params: { id: order.id } }),
+      onError: (error) =>
+        Alert.alert(
+          t('listing.buySecurely'),
+          errorMessage(error, t('orders.createError'), t('common.networkError')),
+        ),
+    });
+  };
 
   const topBar = (
     <View
@@ -299,8 +326,9 @@ export function ListingDetailScreen({ slug }: { slug: string }) {
             title={t('listing.buySecurely')}
             size="lg"
             icon={ShieldCheck}
+            loading={createOrder.isPending}
             disabled={!isOnline}
-            onPress={() => WebBrowser.openBrowserAsync(webUrl)}
+            onPress={buy}
             className="flex-[1.4]"
           />
         </View>

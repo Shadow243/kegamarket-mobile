@@ -125,3 +125,48 @@ export interface LoginResponse {
   user: AuthUser;
   token: string;
 }
+
+export type OrderStatus =
+  'pending_payment' | 'paid_escrow' | 'completed' | 'cancelled' | 'disputed';
+export type PaymentMethod = 'orange_money' | 'airtel_money' | 'mpesa' | 'card' | 'paypal' | 'cash';
+
+export interface DeliveryAddressFields {
+  recipient_name: string;
+  recipient_phone: string;
+  recipient_email: string;
+  delivery_city: string;
+  delivery_commune: string;
+  delivery_address_line: string;
+}
+
+export interface Address {
+  id: string;
+  recipient_name: string;
+  recipient_phone: string;
+  recipient_email: string | null;
+  delivery_city: string;
+  delivery_commune: string | null;
+  delivery_address_line: string;
+  created_at: string;
+}
+
+export interface Order {
+  id: string;
+  reference: string;
+  status: OrderStatus;
+  status_label: string;
+  price: string;
+  currency: string;
+  payment_method: PaymentMethod | null;
+  payment_method_label: string | null;
+  paid_at: string | null;
+  completed_at: string | null;
+  cancelled_at: string | null;
+  dispute_reason: string | null;
+  disputed_at: string | null;
+  created_at: string;
+  has_delivery_address: boolean;
+  delivery_address: { [K in keyof DeliveryAddressFields]: string | null };
+  listing: { id: string; slug: string; title: string; thumbnail_url: string | null };
+  shop: { id: string; name: string };
+}

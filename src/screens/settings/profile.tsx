@@ -29,7 +29,7 @@ import { palette } from '@/theme';
 import { initials } from '@/utils/format';
 
 import { createProfileSchema, type ProfileForm } from './schemas';
-import { useFormMessages } from './use-form-messages';
+import { useFormMessages } from '@/hooks/use-form-messages';
 
 export function ProfileSettings() {
   const { t } = useTranslation();

@@ -36,6 +36,12 @@ export function buildUrl(path: string, query: Record<string, QueryValue> = {}): 
   return `${API_URL}${path}${params ? `?${params}` : ''}`;
 }
 
+/** Headers for requests made outside `request()`, e.g. native file downloads. */
+export function authHeaders(): Record<string, string> {
+  const token = context.getToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 export async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
   const { method = 'GET', query, body, signal } = options;
   const headers: Record<string, string> = { Accept: 'application/json' };

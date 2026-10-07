@@ -7,6 +7,12 @@ export const queryKeys = {
   categories: (locale: string) => ['categories', locale] as const,
   currencies: () => ['currencies'] as const,
   country: () => ['country', 'detect'] as const,
+  orders: {
+    all: ['orders'] as const,
+    list: () => ['orders', 'mine'] as const,
+    detail: (id: string) => ['orders', 'detail', id] as const,
+  },
+  addresses: () => ['addresses'] as const,
   listings: {
     all: ['listings'] as const,
     search: (filters: ListingFilters, locale: string) =>

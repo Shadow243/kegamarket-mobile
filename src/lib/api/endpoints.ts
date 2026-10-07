@@ -1,12 +1,16 @@
 import type {
+  Address,
   AuthUser,
   Category,
   CurrencyRates,
+  DeliveryAddressFields,
   ListingDetailResponse,
   LoginPayload,
   LoginResponse,
   NotificationPreferences,
+  Order,
   Paginated,
+  PaymentMethod,
   PublicListing,
 } from '@/types/api';
 
@@ -79,4 +83,34 @@ export const profileApi = {
     request<UserResponse>('/profile/notifications', { method: 'PATCH', body: preferences }),
   updateLocale: (locale: string) =>
     request<UserResponse>('/profile/locale', { method: 'PATCH', body: { locale } }),
+};
+
+type OrderResponse = { order: Order };
+
+export const ordersApi = {
+  mine: ({ signal }: Signal = {}) => request<{ data: Order[] }>('/orders/mine', { signal }),
+  show: (id: string, { signal }: Signal = {}) =>
+    request<OrderResponse>(`/orders/${id}`, { signal }),
+  create: (listingId: string) =>
+    request<OrderResponse>('/orders', { method: 'POST', body: { listing_id: listingId } }),
+  setDeliveryAddress: (id: string, body: { address_id: string } | DeliveryAddressFields) =>
+    request<OrderResponse>(`/orders/${id}/delivery-address`, { method: 'POST', body }),
+  pay: (id: string, paymentMethod: PaymentMethod) =>
+    request<OrderResponse & { redirect_url: string | null }>(`/orders/${id}/pay`, {
+      method: 'POST',
+      body: { payment_method: paymentMethod },
+    }),
+  confirmPayment: (id: string) =>
+    request<OrderResponse>(`/orders/${id}/confirm-payment`, { method: 'POST' }),
+  confirmReceipt: (id: string) =>
+    request<OrderResponse>(`/orders/${id}/confirm-receipt`, { method: 'POST' }),
+  cancel: (id: string) => request<OrderResponse>(`/orders/${id}/cancel`, { method: 'POST' }),
+  dispute: (id: string, reason: string) =>
+    request<OrderResponse>(`/orders/${id}/dispute`, { method: 'POST', body: { reason } }),
+  invoicePath: (id: string) => `/orders/${id}/invoice`,
+};
+
+export const addressesApi = {
+  list: ({ signal }: Signal = {}) => request<{ data: Address[] }>('/addresses', { signal }),
+  remove: (id: string) => request<void>(`/addresses/${id}`, { method: 'DELETE' }),
 };

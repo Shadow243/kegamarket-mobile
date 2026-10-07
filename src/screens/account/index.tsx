@@ -10,6 +10,7 @@ import {
   LockKeyhole,
   LogOut,
   ShieldCheck,
+  ShoppingBag,
   SunMoon,
   UserRound,
 } from 'lucide-react-native';
@@ -140,6 +141,16 @@ export function Account() {
       <ScreenHeader title={t('account.title')} />
       <ScrollView contentContainerClassName="pb-12 pt-3">
         {isAuthenticated ? <ProfileCard /> : <GuestCard />}
+
+        {user ? (
+          <ListGroup title={t('account.activity')}>
+            <ListRow
+              icon={ShoppingBag}
+              label={t('orders.title')}
+              onPress={() => router.push('/orders')}
+            />
+          </ListGroup>
+        ) : null}
 
         {user ? (
           <ListGroup title={t('settings.title')}>
