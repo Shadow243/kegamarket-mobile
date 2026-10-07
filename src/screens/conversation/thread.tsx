@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { ArrowLeft, Bot, ChevronRight, CloudOff } from 'lucide-react-native';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -32,6 +32,7 @@ import { useCurrentUser } from '@/hooks/use-session';
 import { useThemeColors } from '@/hooks/use-theme';
 import { errorMessage } from '@/lib/api/errors';
 import type { OutgoingMessage } from '@/lib/api/endpoints';
+import { setOpenConversation } from '@/lib/push';
 import { night } from '@/theme';
 import type { Conversation, Message } from '@/types/api';
 import { flattenMessages } from '@/utils/messages';
@@ -135,6 +136,12 @@ export function Thread({
 
   useEffect(markAsRead, [markAsRead]);
   useConversationChannel(conversationId, markAsRead);
+  useFocusEffect(
+    useCallback(() => {
+      setOpenConversation(conversationId);
+      return () => setOpenConversation(null);
+    }, [conversationId]),
+  );
 
   const messages = useMemo(() => flattenMessages(messagesQuery.data), [messagesQuery.data]);
   const inverted = useMemo(() => [...messages].reverse(), [messages]);

@@ -180,6 +180,12 @@ export const conversationsApi = {
     request<{ conversation: Conversation }>('/support/chat', { signal }),
 };
 
+export const devicesApi = {
+  register: (token: string, platform: 'ios' | 'android') =>
+    request<void>('/devices', { method: 'POST', body: { token, platform } }),
+  unregister: (token: string) => request<void>('/devices', { method: 'DELETE', body: { token } }),
+};
+
 export const broadcastingApi = {
   auth: (socketId: string, channelName: string) =>
     request<{ auth: string; channel_data?: string }>('/broadcasting/auth', {

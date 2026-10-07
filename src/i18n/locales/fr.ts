@@ -169,11 +169,11 @@ export const fr = {
     documentSoon: 'L’envoi de la pièce d’identité arrive bientôt sur mobile.',
     notificationsNewMessages: 'Nouveaux messages',
     notificationsNewMessagesHint:
-      'Recevoir un e-mail lorsqu’un vendeur ou une entreprise vous écrit.',
+      'Recevoir une notification lorsqu’un vendeur ou une entreprise vous écrit.',
     notificationsOrderUpdates: 'Suivi de commande',
     notificationsOrderUpdatesHint: 'Être averti à chaque étape du séquestre et de la livraison.',
     notificationsApplicationReplies: 'Réponses à mes candidatures',
-    notificationsApplicationRepliesHint: 'Recevoir un e-mail dès qu’une entreprise répond.',
+    notificationsApplicationRepliesHint: 'Recevoir une notification dès qu’une entreprise répond.',
     notificationsPromotions: 'Offres et promotions',
     notificationsPromotionsHint: 'Bons plans, nouveautés et conseils Kega.',
     requiresConnection: 'Une connexion Internet est nécessaire pour enregistrer.',

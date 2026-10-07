@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import { unregisterPushDevice } from '@/hooks/use-push-notifications';
 import { authApi } from '@/lib/api/endpoints';
 import { queryKeys } from '@/lib/query/keys';
 import { persistOptions } from '@/lib/query/query-client';
@@ -50,7 +51,10 @@ export function useLogout() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: () => authApi.logout().catch(() => undefined),
+    mutationFn: async () => {
+      await unregisterPushDevice();
+      await authApi.logout().catch(() => undefined);
+    },
     onSettled: () => signOutLocally(queryClient),
   });
 }

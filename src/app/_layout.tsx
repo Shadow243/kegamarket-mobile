@@ -16,6 +16,7 @@ import { useEffect } from 'react';
 
 import { AppProviders } from '@/components/app-providers';
 import { OfflineBanner } from '@/components/offline-banner';
+import { usePushRegistration, usePushTapRouting } from '@/hooks/use-push-notifications';
 import { useScheme } from '@/hooks/use-theme';
 import { useAuthStore } from '@/stores/auth-store';
 import { usePreferencesHydrated, usePreferencesStore } from '@/stores/preferences-store';
@@ -60,6 +61,8 @@ function RootStack() {
   const scheme = useScheme();
   const hasSeenWelcome = usePreferencesStore((state) => state.hasSeenWelcome);
   const isSignedIn = useAuthStore((state) => state.token !== null);
+  usePushRegistration();
+  usePushTapRouting();
 
   return (
     <>
