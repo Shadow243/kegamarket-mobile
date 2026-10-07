@@ -5,6 +5,7 @@ import {
   MapPin,
   MessageCircle,
   PackageX,
+  Phone,
   Share2,
   ShieldCheck,
 } from 'lucide-react-native';
@@ -28,6 +29,7 @@ import { Skeleton } from '@/components/skeleton';
 import { StateView } from '@/components/state-view';
 import { Text } from '@/components/text';
 import { useCategories } from '@/hooks/use-catalog';
+import { useStartConversation } from '@/hooks/use-conversations';
 import { useCurrency } from '@/hooks/use-currency';
 import { useIsOnline } from '@/hooks/use-is-online';
 import { useListingDetail } from '@/hooks/use-listings';
@@ -75,6 +77,7 @@ export function ListingDetailScreen({ slug }: { slug: string }) {
   const categories = useCategories();
   const currency = useCurrency();
   const createOrder = useCreateOrder();
+  const startConversation = useStartConversation();
   const isSignedIn = useAuthStore((state) => state.token !== null);
   const listing = detail.data?.listing;
   const whatsapp = detail.data?.contact_whatsapp_number;
@@ -92,6 +95,23 @@ export function ListingDetailScreen({ slug }: { slug: string }) {
 
   const webUrl = `${SITE_URL}${locale === 'fr' ? '' : `/${locale}`}/listing/${slug}`;
   const goBack = () => (router.canGoBack() ? router.back() : router.replace('/'));
+
+  const contactSeller = () => {
+    if (!listing || startConversation.isPending) return;
+    if (!isSignedIn) {
+      router.push('/login');
+      return;
+    }
+    startConversation.mutate(listing.id, {
+      onSuccess: (conversation) =>
+        router.push({ pathname: '/conversation/[id]', params: { id: conversation.id } }),
+      onError: (error) =>
+        Alert.alert(
+          t('messages.contactSeller'),
+          errorMessage(error, t('messages.startError'), t('common.networkError')),
+        ),
+    });
+  };
 
   const buy = () => {
     if (!listing || createOrder.isPending) return;
@@ -309,19 +329,28 @@ export function ListingDetailScreen({ slug }: { slug: string }) {
         ) : null}
         <View className="flex-row gap-3">
           {whatsapp ? (
-            <Button
-              title={t('listing.contactWhatsApp')}
+            <IconButton
+              icon={Phone}
               variant="outline"
-              size="lg"
-              icon={MessageCircle}
+              size={56}
+              accessibilityLabel={t('listing.contactWhatsApp')}
               onPress={() =>
                 Linking.openURL(
                   `https://wa.me/${whatsapp.replace(/\D/g, '')}?text=${encodeURIComponent(`${listing.localized_title} — ${webUrl}`)}`,
                 )
               }
-              className="flex-1"
             />
           ) : null}
+          <Button
+            title={t('messages.contactSeller')}
+            variant="outline"
+            size="lg"
+            icon={MessageCircle}
+            loading={startConversation.isPending}
+            disabled={!isOnline}
+            onPress={contactSeller}
+            className="flex-1"
+          />
           <Button
             title={t('listing.buySecurely')}
             size="lg"
@@ -329,7 +358,7 @@ export function ListingDetailScreen({ slug }: { slug: string }) {
             loading={createOrder.isPending}
             disabled={!isOnline}
             onPress={buy}
-            className="flex-[1.4]"
+            className="flex-1"
           />
         </View>
       </View>

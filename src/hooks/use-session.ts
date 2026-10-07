@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { authApi } from '@/lib/api/endpoints';
 import { queryKeys } from '@/lib/query/keys';
 import { persistOptions } from '@/lib/query/query-client';
+import { disconnectEcho } from '@/lib/realtime';
 import { useAuthStore } from '@/stores/auth-store';
 import type { LoginPayload } from '@/types/api';
 
@@ -40,6 +41,7 @@ export function useLogin() {
 /** Clears the session everywhere, including the on-disk query cache (it holds the user's own data). */
 export async function signOutLocally(queryClient: ReturnType<typeof useQueryClient>) {
   await useAuthStore.getState().clear();
+  disconnectEcho();
   queryClient.clear();
   await persistOptions.persister.removeClient();
 }

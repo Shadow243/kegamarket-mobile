@@ -8,6 +8,8 @@ import { useScheme } from '@/hooks/use-theme';
 import { night } from '@/theme';
 import { cn } from '@/utils/cn';
 
+import { Text } from './text';
+
 type TabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>['tabBar']>>[0];
 
 const BAR_HEIGHT = 64;
@@ -62,7 +64,9 @@ export function FloatingTabBar({ state, descriptors, navigation }: TabBarProps) 
               key={route.key}
               accessibilityRole="tab"
               accessibilityState={{ selected: focused }}
-              accessibilityLabel={options.title}
+              accessibilityLabel={
+                options.tabBarBadge ? `${options.title}, ${options.tabBarBadge}` : options.title
+              }
               onPress={onPress}
               onLongPress={() => navigation.emit({ type: 'tabLongPress', target: route.key })}
               className={cn(
@@ -72,6 +76,24 @@ export function FloatingTabBar({ state, descriptors, navigation }: TabBarProps) 
               style={{ width: ITEM_SIZE + 8, height: ITEM_SIZE }}
             >
               {options.tabBarIcon?.({ focused, color, size: 22 })}
+              {options.tabBarBadge !== undefined ? (
+                <View
+                  className={cn(
+                    'absolute right-2.5 top-1.5 h-[18px] min-w-[18px] items-center justify-center rounded-full px-1',
+                    focused ? 'bg-night-900' : 'bg-accent-400',
+                  )}
+                >
+                  <Text
+                    variant="caption"
+                    className={cn(
+                      'font-body-bold text-[10px] leading-3',
+                      focused ? 'text-white' : 'text-night-900',
+                    )}
+                  >
+                    {Number(options.tabBarBadge) > 99 ? '99+' : options.tabBarBadge}
+                  </Text>
+                </View>
+              ) : null}
             </Pressable>
           );
         })}

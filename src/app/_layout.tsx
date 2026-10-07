@@ -91,6 +91,8 @@ function RootStack() {
             <Stack.Screen name="orders/[id]" />
             <Stack.Screen name="saved-searches" />
             <Stack.Screen name="applications" />
+            <Stack.Screen name="conversation/[id]" />
+            <Stack.Screen name="support" />
           </Stack.Protected>
         </Stack.Protected>
       </Stack>

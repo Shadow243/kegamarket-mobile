@@ -199,3 +199,43 @@ export interface JobApplication {
   created_at: string;
   job_posting?: { id: string; title: string; shop: { id: string; name: string } | null };
 }
+
+export interface ConversationParticipant {
+  id: string;
+  name: string;
+  avatar_url: string | null;
+}
+
+export interface Conversation {
+  id: string;
+  listing: { id: string; slug: string; title: string; thumbnail_url: string | null } | null;
+  other_participant: ConversationParticipant | null;
+  last_message: {
+    body: string | null;
+    sender_id: string;
+    has_photos: boolean;
+    is_share: boolean;
+    created_at: string;
+  } | null;
+  unread_count: number;
+  updated_at: string;
+}
+
+export interface Message {
+  id: string;
+  conversation_id: string;
+  body: string | null;
+  sender: ConversationParticipant;
+  shared_listing: {
+    id: string;
+    slug: string;
+    title: string;
+    price: string;
+    currency: string;
+    thumbnail_url: string | null;
+  } | null;
+  shared_job_posting: { id: string; slug: string; title: string } | null;
+  photos: { thumb_url: string; preview_url: string }[];
+  reactions: { emoji: string; user_id: string }[];
+  created_at: string;
+}

@@ -2,12 +2,14 @@ import type {
   Address,
   AuthUser,
   Category,
+  Conversation,
   CurrencyRates,
   DeliveryAddressFields,
   JobApplication,
   ListingDetailResponse,
   LoginPayload,
   LoginResponse,
+  Message,
   NotificationPreferences,
   Order,
   Paginated,
@@ -132,4 +134,56 @@ export const savedSearchesApi = {
 export const applicationsApi = {
   mine: ({ signal }: Signal = {}) =>
     request<{ data: JobApplication[] }>('/jobs/applications/mine', { signal }),
+};
+
+export interface OutgoingPhoto {
+  uri: string;
+  name: string;
+  type: string;
+}
+
+export interface OutgoingMessage {
+  body?: string;
+  sharedListingId?: string;
+  photos?: OutgoingPhoto[];
+}
+
+export const conversationsApi = {
+  list: ({ signal }: Signal = {}) =>
+    request<{ data: Conversation[]; meta: { unread_total: number } }>('/conversations', { signal }),
+  start: (listingId: string) =>
+    request<{ conversation: Conversation }>('/conversations', {
+      method: 'POST',
+      body: { listing_id: listingId },
+    }),
+  messages: (id: string, page: number, { signal }: Signal = {}) =>
+    request<Paginated<Message>>(`/conversations/${id}/messages`, { query: { page }, signal }),
+  send: (id: string, message: OutgoingMessage) => {
+    const form = new FormData();
+    if (message.body) form.append('body', message.body);
+    if (message.sharedListingId) form.append('shared_listing_id', message.sharedListingId);
+    message.photos?.forEach((photo) => form.append('photos[]', photo as never));
+    return request<{ message: Message }>(`/conversations/${id}/messages`, {
+      method: 'POST',
+      body: form,
+    });
+  },
+  toggleReaction: (id: string, messageId: string, emoji: string) =>
+    request<{ message: Message }>(`/conversations/${id}/messages/${messageId}/reactions`, {
+      method: 'POST',
+      body: { emoji },
+    }),
+  remove: (id: string, messageId: string) =>
+    request<void>(`/conversations/${id}/messages/${messageId}`, { method: 'DELETE' }),
+  markRead: (id: string) => request<void>(`/conversations/${id}/read`, { method: 'POST' }),
+  support: ({ signal }: Signal = {}) =>
+    request<{ conversation: Conversation }>('/support/chat', { signal }),
+};
+
+export const broadcastingApi = {
+  auth: (socketId: string, channelName: string) =>
+    request<{ auth: string; channel_data?: string }>('/broadcasting/auth', {
+      method: 'POST',
+      body: { socket_id: socketId, channel_name: channelName },
+    }),
 };

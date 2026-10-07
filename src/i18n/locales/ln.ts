@@ -1,7 +1,13 @@
 import type { TranslationResource } from './fr';
 
 export const ln: TranslationResource = {
-  tabs: { home: 'Ekomelo', search: 'Luka', favorites: 'Favoris', account: 'Compte' },
+  tabs: {
+    messages: 'Ba message',
+    home: 'Ekomelo',
+    search: 'Luka',
+    favorites: 'Favoris',
+    account: 'Compte',
+  },
   common: {
     yes: 'Iyo',
     no: 'Te',
@@ -269,6 +275,40 @@ export const ln: TranslationResource = {
     emptyAll: 'Otindi naino candidature moko te.',
     sentAgo: 'Etindami {{time}}',
     status: { pending: 'Etindami', selected: 'Eponami', rejected: 'Eboyami' },
+  },
+  messages: {
+    title: 'Ba message',
+    empty: 'Lisolo moko te sikoyo.',
+    emptyBody: 'Benga moteki na announce mpo na kobanda lisolo.',
+    guestTitle: 'Solola na ba moteki',
+    guestBody: 'Kota mpo na kosolola na ba moteki mpe kolanda masolo na yo.',
+    photo: 'Foto',
+    sharedListing: 'Announce ekabolami',
+    you: 'Yo : ',
+    placeholder: 'Koma message…',
+    send: 'Tinda',
+    addPhoto: 'Bakisa foto',
+    shareListing: 'Kabola announce',
+    searchListings: 'Luka announce ya kokabola',
+    loadEarlier: 'Ba message ya kala',
+    sendError: 'Ekoki kotinda message oyo te.',
+    deleteMessage: 'Longola message',
+    deleteConfirm: 'Longola message oyo mpo na bato nyonso ?',
+    copy: 'Kopi',
+    pending: 'Ezali kotindama…',
+    contactSeller: 'Solola',
+    startError: 'Ekoki kobanda lisolo te. Meka lisusu.',
+    offlineComposer: 'Internet ezali te : ba message na yo ekokende soki internet ezongi.',
+    photoPermission: 'Pesa nzela na ba foto na yo mpo na kotinda yango.',
+  },
+  support: {
+    title: 'Mosungi Kega',
+    subtitle: 'Biyano mbala moko, 24h/24',
+    greeting:
+      'Mbote ! Tuna ngai mituna na yo na ntina ya ba announces, kofuta to ba commande na yo.',
+    placeholder: 'Tuna motuna na yo…',
+    viewListing: 'Tala announce',
+    help: 'Lisungi',
   },
   welcome: {
     skip: 'Leka',

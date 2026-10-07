@@ -15,6 +15,11 @@ export const queryKeys = {
   addresses: () => ['addresses'] as const,
   savedSearches: () => ['saved-searches'] as const,
   applications: () => ['applications'] as const,
+  conversations: {
+    list: () => ['conversations'] as const,
+    messages: (id: string) => ['conversations', 'messages', id] as const,
+    support: () => ['conversations', 'support'] as const,
+  },
   listings: {
     all: ['listings'] as const,
     search: (filters: ListingFilters, locale: string) =>
