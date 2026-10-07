@@ -36,7 +36,7 @@ export function PaymentStep({ order }: { order: Order }) {
   const { t } = useTranslation();
   const locale = useLocale();
   const isOnline = useIsOnline();
-  const pay = usePayOrder(order.id);
+  const pay = usePayOrder(order.id, order.delivery_address.recipient_name ?? undefined);
   const [method, setMethod] = useState<PaymentMethod>('orange_money');
 
   return (

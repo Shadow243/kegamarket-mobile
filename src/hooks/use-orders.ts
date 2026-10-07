@@ -1,11 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
-import * as WebBrowser from 'expo-web-browser';
 
 import { authHeaders } from '@/lib/api/client';
 import { addressesApi, ordersApi } from '@/lib/api/endpoints';
 import { API_URL } from '@/lib/config';
+import { openHostedCheckout, payWithPaymentSheet } from '@/lib/payments';
 import { queryKeys } from '@/lib/query/keys';
 import { useAuthStore } from '@/stores/auth-store';
 import type { Address, DeliveryAddressFields, Order, PaymentMethod } from '@/types/api';
@@ -80,17 +80,28 @@ export function useDeleteAddress() {
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
- * Gateway methods hand back a checkout URL: open it in an in-app browser, then confirm the
- * payment as soon as the buyer comes back, polling briefly in case the gateway is still settling.
+ * Card is paid in Stripe's native sheet, PayPal in a sheet that returns to the app by itself;
+ * either way the payment is then confirmed, polling briefly while the gateway settles.
  */
-export function usePayOrder(orderId: string) {
+export function usePayOrder(orderId: string, billingName?: string) {
   const storeOrder = useStoreOrder();
   return useMutation({
     mutationFn: async (method: PaymentMethod) => {
-      const { order, redirect_url } = await ordersApi.pay(orderId, method);
-      if (!redirect_url) return order;
+      const result = await ordersApi.pay(orderId, method);
+      const { order } = result;
 
-      await WebBrowser.openBrowserAsync(redirect_url);
+      if (result.client_secret && result.publishable_key) {
+        const paid = await payWithPaymentSheet({
+          clientSecret: result.client_secret,
+          publishableKey: result.publishable_key,
+          billingName,
+        });
+        if (!paid) return order;
+      } else if (result.redirect_url) {
+        await openHostedCheckout(result.redirect_url);
+      } else {
+        return order;
+      }
 
       let current = (await ordersApi.confirmPayment(orderId).catch(() => ({ order }))).order;
       for (
