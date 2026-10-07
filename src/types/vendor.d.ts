@@ -1,0 +1,4 @@
+declare module '@react-native-community/netinfo/jest/netinfo-mock' {
+  const mock: Record<string, unknown>;
+  export default mock;
+}
