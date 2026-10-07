@@ -32,6 +32,17 @@ export function isApiError(error: unknown): error is ApiError {
   return error instanceof ApiError;
 }
 
+/** Message for a form's banner; null when the error is already shown next to its fields. */
+export function formLevelError(
+  error: unknown,
+  fallback: string,
+  networkFallback: string,
+): string | null {
+  if (!error) return null;
+  if (isApiError(error) && Object.keys(error.errors).length > 0) return null;
+  return errorMessage(error, fallback, networkFallback);
+}
+
 /** Message to show for any thrown value, choosing the network wording when nothing reached the server. */
 export function errorMessage(error: unknown, fallback: string, networkFallback: string): string {
   if (!isApiError(error)) return fallback;

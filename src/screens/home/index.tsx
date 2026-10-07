@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { RefreshControl, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { AccountButton } from '@/components/account-button';
 import { useTabBarSpace } from '@/components/floating-tab-bar';
 import { InlineNotice } from '@/components/inline-notice';
 import { ListingCard, ListingCardSkeleton } from '@/components/listing-card';
@@ -82,6 +83,7 @@ export function Home() {
             contentFit="contain"
             accessibilityLabel="Kega"
           />
+          <AccountButton />
         </View>
 
         <View className="mb-6 px-5">

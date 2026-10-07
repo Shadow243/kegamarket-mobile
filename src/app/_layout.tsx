@@ -59,6 +59,7 @@ export default function RootLayout() {
 function RootStack() {
   const scheme = useScheme();
   const hasSeenWelcome = usePreferencesStore((state) => state.hasSeenWelcome);
+  const isSignedIn = useAuthStore((state) => state.token !== null);
 
   return (
     <>
@@ -71,6 +72,22 @@ function RootStack() {
           <Stack.Screen name="(tabs)" options={{ animation: 'fade' }} />
           <Stack.Screen name="listing/[slug]" />
           <Stack.Screen name="login" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="account" />
+          <Stack.Screen
+            name="settings/preference"
+            options={{
+              presentation: 'formSheet',
+              sheetAllowedDetents: [0.55, 0.95],
+              sheetGrabberVisible: true,
+              sheetCornerRadius: 28,
+            }}
+          />
+          <Stack.Protected guard={isSignedIn}>
+            <Stack.Screen name="settings/profile" />
+            <Stack.Screen name="settings/security" />
+            <Stack.Screen name="settings/verification" />
+            <Stack.Screen name="settings/notifications" />
+          </Stack.Protected>
         </Stack.Protected>
       </Stack>
     </>

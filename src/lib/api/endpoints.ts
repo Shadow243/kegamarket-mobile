@@ -5,6 +5,7 @@ import type {
   ListingDetailResponse,
   LoginPayload,
   LoginResponse,
+  NotificationPreferences,
   Paginated,
   PublicListing,
 } from '@/types/api';
@@ -50,4 +51,32 @@ export const authApi = {
     request<LoginResponse>('/auth/login', { method: 'POST', body: payload }),
   me: ({ signal }: Signal = {}) => request<AuthUser>('/auth/me', { signal }),
   logout: () => request<void>('/auth/logout', { method: 'POST' }),
+};
+
+export interface ProfilePayload {
+  name: string;
+  email: string;
+  phone: string;
+  locale: string;
+}
+
+export interface PasswordPayload {
+  current_password: string;
+  password: string;
+  password_confirmation: string;
+}
+
+type UserResponse = { user: AuthUser };
+
+export const profileApi = {
+  update: (payload: ProfilePayload) =>
+    request<UserResponse>('/profile', { method: 'PATCH', body: payload }),
+  updatePassword: (payload: PasswordPayload) =>
+    request<{ message: string }>('/profile/password', { method: 'PUT', body: payload }),
+  updateAvatar: (form: FormData) =>
+    request<UserResponse>('/profile/avatar', { method: 'POST', body: form }),
+  updateNotifications: (preferences: Partial<NotificationPreferences>) =>
+    request<UserResponse>('/profile/notifications', { method: 'PATCH', body: preferences }),
+  updateLocale: (locale: string) =>
+    request<UserResponse>('/profile/locale', { method: 'PATCH', body: { locale } }),
 };

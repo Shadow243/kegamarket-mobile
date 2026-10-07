@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { CircleUserRound, Heart, House, Search } from 'lucide-react-native';
+import { Heart, House, Search } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 
 import { FloatingTabBar } from '@/components/floating-tab-bar';
@@ -33,15 +33,6 @@ export default function TabsLayout() {
           title: t('tabs.favorites'),
           tabBarIcon: ({ color, focused }) => (
             <Heart color={color} size={22} strokeWidth={focused ? 2.4 : 2} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="account"
-        options={{
-          title: t('tabs.account'),
-          tabBarIcon: ({ color, focused }) => (
-            <CircleUserRound color={color} size={22} strokeWidth={focused ? 2.4 : 2} />
           ),
         }}
       />

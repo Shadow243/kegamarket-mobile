@@ -53,7 +53,6 @@ function SearchContent({ params }: { params: SearchParams }) {
   const [onSale, setOnSale] = useState(params.on_sale === '1');
   const [showSorts, setShowSorts] = useState(params.filters === '1' || Boolean(params.sort));
 
-
   const search = useDebouncedValue(query.trim());
   const filters = useMemo<ListingFilters>(
     () => ({ search: search || undefined, category, sort, on_sale: onSale || undefined }),
