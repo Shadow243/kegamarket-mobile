@@ -28,26 +28,63 @@ export function convertAmount(
   return (amount / fromRate) * toRate;
 }
 
-const DIVISIONS: { amount: number; unit: Intl.RelativeTimeFormatUnit }[] = [
-  { amount: 60, unit: 'seconds' },
-  { amount: 60, unit: 'minutes' },
-  { amount: 24, unit: 'hours' },
-  { amount: 7, unit: 'days' },
-  { amount: 4.34524, unit: 'weeks' },
-  { amount: 12, unit: 'months' },
-  { amount: Number.POSITIVE_INFINITY, unit: 'years' },
+type TimeUnit = 'minute' | 'hour' | 'day' | 'week' | 'month' | 'year';
+
+// Hermes ships no Intl.RelativeTimeFormat, so relative times are formatted by hand.
+const RELATIVE_TIME: Record<string, { now: string; yesterday: string } & Record<TimeUnit, string>> = {
+  fr: {
+    now: 'à l’instant',
+    yesterday: 'hier',
+    minute: 'il y a {n} min',
+    hour: 'il y a {n} h',
+    day: 'il y a {n} j',
+    week: 'il y a {n} sem.',
+    month: 'il y a {n} mois',
+    year: 'il y a {n} an',
+  },
+  en: {
+    now: 'just now',
+    yesterday: 'yesterday',
+    minute: '{n} min ago',
+    hour: '{n} h ago',
+    day: '{n} d ago',
+    week: '{n} wk ago',
+    month: '{n} mo ago',
+    year: '{n} yr ago',
+  },
+  ln: {
+    now: 'sikoyo',
+    yesterday: 'lobi',
+    minute: 'miniti {n} eleki',
+    hour: 'ngonga {n} eleki',
+    day: 'mikolo {n} eleki',
+    week: 'poso {n} eleki',
+    month: 'sanza {n} eleki',
+    year: 'mibu {n} eleki',
+  },
+};
+
+const UNITS: { unit: TimeUnit; seconds: number }[] = [
+  { unit: 'year', seconds: 365 * 24 * 3600 },
+  { unit: 'month', seconds: 30 * 24 * 3600 },
+  { unit: 'week', seconds: 7 * 24 * 3600 },
+  { unit: 'day', seconds: 24 * 3600 },
+  { unit: 'hour', seconds: 3600 },
+  { unit: 'minute', seconds: 60 },
 ];
 
-/** "il y a 2 h" / "2 hours ago". */
+/** "il y a 2 h" / "2 h ago". */
 export function formatTimeAgo(isoDate: string, locale: string, now: number = Date.now()): string {
-  let duration = (new Date(isoDate).getTime() - now) / 1000;
-  const rtf = new Intl.RelativeTimeFormat(intlLocale(locale), { numeric: 'auto' });
+  const words = RELATIVE_TIME[locale] ?? RELATIVE_TIME.fr;
+  const elapsed = Math.max(0, (now - new Date(isoDate).getTime()) / 1000);
 
-  for (const division of DIVISIONS) {
-    if (Math.abs(duration) < division.amount) return rtf.format(Math.round(duration), division.unit);
-    duration /= division.amount;
+  for (const { unit, seconds } of UNITS) {
+    const count = Math.floor(elapsed / seconds);
+    if (count < 1) continue;
+    if (unit === 'day' && count === 1) return words.yesterday;
+    return words[unit].replace('{n}', String(count));
   }
-  return rtf.format(Math.round(duration), 'years');
+  return words.now;
 }
 
 /** "septembre 2026" */

@@ -36,8 +36,25 @@ describe('formatTimeAgo', () => {
   const now = new Date('2026-10-07T12:00:00Z').getTime();
 
   it('describes recent dates relative to now', () => {
-    expect(formatTimeAgo('2026-10-07T10:00:00Z', 'en', now)).toBe('2 hours ago');
+    expect(formatTimeAgo('2026-10-07T11:59:30Z', 'fr', now)).toBe('à l’instant');
+    expect(formatTimeAgo('2026-10-07T10:00:00Z', 'fr', now)).toBe('il y a 2 h');
     expect(formatTimeAgo('2026-10-06T12:00:00Z', 'en', now)).toBe('yesterday');
+    expect(formatTimeAgo('2026-09-07T12:00:00Z', 'ln', now)).toBe('sanza 1 eleki');
+  });
+
+  it('does not rely on Intl.RelativeTimeFormat, which Hermes lacks', () => {
+    const original = Intl.RelativeTimeFormat;
+    // @ts-expect-error simulating the Hermes runtime
+    delete Intl.RelativeTimeFormat;
+    try {
+      expect(formatTimeAgo('2026-10-04T12:00:00Z', 'fr', now)).toBe('il y a 3 j');
+    } finally {
+      Intl.RelativeTimeFormat = original;
+    }
+  });
+
+  it('falls back to French for an unknown locale and never goes negative', () => {
+    expect(formatTimeAgo('2026-10-08T12:00:00Z', 'de', now)).toBe('à l’instant');
   });
 });
 
