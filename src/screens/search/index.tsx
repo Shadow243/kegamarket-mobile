@@ -9,6 +9,7 @@ import { Chip } from '@/components/chip';
 import { useTabBarSpace } from '@/components/floating-tab-bar';
 import { ListingGrid } from '@/components/listing-grid';
 import { SearchBar } from '@/components/search-bar';
+import { SaveSearchButton } from './save-search-button';
 import { StateView } from '@/components/state-view';
 import { Text } from '@/components/text';
 import { useCategories } from '@/hooks/use-catalog';
@@ -118,9 +119,17 @@ function SearchContent({ params }: { params: SearchParams }) {
         </ScrollView>
       ) : null}
       {results.data ? (
-        <Text variant="caption" tone="muted" className="px-5 pb-3 pt-1">
-          {t('search.resultsCount', { count: total })}
-        </Text>
+        <View className="flex-row items-center justify-between px-5 pb-3 pt-1">
+          <Text variant="caption" tone="muted">
+            {t('search.resultsCount', { count: total })}
+          </Text>
+          {search || category ? (
+            <SaveSearchButton
+              key={`${search}|${category ?? ''}`}
+              filters={{ search: search || undefined, category }}
+            />
+          ) : null}
+        </View>
       ) : null}
     </View>
   );

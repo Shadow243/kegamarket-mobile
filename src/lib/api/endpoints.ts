@@ -4,6 +4,7 @@ import type {
   Category,
   CurrencyRates,
   DeliveryAddressFields,
+  JobApplication,
   ListingDetailResponse,
   LoginPayload,
   LoginResponse,
@@ -12,6 +13,8 @@ import type {
   Paginated,
   PaymentMethod,
   PublicListing,
+  SavedSearch,
+  SavedSearchFilters,
 } from '@/types/api';
 
 import { request } from './client';
@@ -113,4 +116,20 @@ export const ordersApi = {
 export const addressesApi = {
   list: ({ signal }: Signal = {}) => request<{ data: Address[] }>('/addresses', { signal }),
   remove: (id: string) => request<void>(`/addresses/${id}`, { method: 'DELETE' }),
+};
+
+export const savedSearchesApi = {
+  list: ({ signal }: Signal = {}) =>
+    request<{ data: SavedSearch[] }>('/saved-searches', { signal }),
+  create: (filters: SavedSearchFilters, name?: string) =>
+    request<{ saved_search: SavedSearch }>('/saved-searches', {
+      method: 'POST',
+      body: { name: name || undefined, filters },
+    }),
+  remove: (id: string) => request<void>(`/saved-searches/${id}`, { method: 'DELETE' }),
+};
+
+export const applicationsApi = {
+  mine: ({ signal }: Signal = {}) =>
+    request<{ data: JobApplication[] }>('/jobs/applications/mine', { signal }),
 };

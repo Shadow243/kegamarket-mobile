@@ -170,3 +170,32 @@ export interface Order {
   listing: { id: string; slug: string; title: string; thumbnail_url: string | null };
   shop: { id: string; name: string };
 }
+
+export interface SavedSearchFilters {
+  search?: string;
+  country?: string;
+  city?: string | string[];
+  category?: string;
+  price_min?: string | number;
+  price_max?: string | number;
+  verified_only?: boolean;
+}
+
+export interface SavedSearch {
+  id: string;
+  name: string | null;
+  filters: SavedSearchFilters;
+  last_notified_at: string | null;
+  created_at: string;
+}
+
+export type JobApplicationStatus = 'pending' | 'selected' | 'rejected';
+
+export interface JobApplication {
+  id: string;
+  message: string | null;
+  status: JobApplicationStatus;
+  documents: { id: number; label: string; document_type: string | null; uploaded_at: string }[];
+  created_at: string;
+  job_posting?: { id: string; title: string; shop: { id: string; name: string } | null };
+}

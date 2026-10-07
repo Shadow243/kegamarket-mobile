@@ -13,6 +13,8 @@ export const queryKeys = {
     detail: (id: string) => ['orders', 'detail', id] as const,
   },
   addresses: () => ['addresses'] as const,
+  savedSearches: () => ['saved-searches'] as const,
+  applications: () => ['applications'] as const,
   listings: {
     all: ['listings'] as const,
     search: (filters: ListingFilters, locale: string) =>

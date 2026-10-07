@@ -5,6 +5,8 @@ import {
   ArrowRight,
   BadgeCheck,
   Bell,
+  BellRing,
+  BriefcaseBusiness,
   Coins,
   Languages,
   LockKeyhole,
@@ -148,6 +150,16 @@ export function Account() {
               icon={ShoppingBag}
               label={t('orders.title')}
               onPress={() => router.push('/orders')}
+            />
+            <ListRow
+              icon={BriefcaseBusiness}
+              label={t('applications.title')}
+              onPress={() => router.push('/applications')}
+            />
+            <ListRow
+              icon={BellRing}
+              label={t('savedSearches.title')}
+              onPress={() => router.push('/saved-searches')}
             />
           </ListGroup>
         ) : null}
