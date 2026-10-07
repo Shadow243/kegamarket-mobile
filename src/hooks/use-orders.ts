@@ -9,9 +9,11 @@ import { openHostedCheckout, payWithPaymentSheet } from '@/lib/payments';
 import { queryKeys } from '@/lib/query/keys';
 import { useAuthStore } from '@/stores/auth-store';
 import type { Address, DeliveryAddressFields, Order, PaymentMethod } from '@/types/api';
+import { isMobileMoney } from '@/utils/order-status';
 
 const CONFIRMATION_ATTEMPTS = 10;
 const CONFIRMATION_INTERVAL = 3000;
+const MOBILE_MONEY_ATTEMPTS = 50;
 
 export function useOrders() {
   const isSignedIn = useAuthStore((state) => state.token !== null);
@@ -80,15 +82,17 @@ export function useDeleteAddress() {
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
- * Card is paid in Stripe's native sheet, PayPal in a sheet that returns to the app by itself;
- * either way the payment is then confirmed, polling briefly while the gateway settles.
+ * Card is paid in Stripe's native sheet, PayPal in a sheet that returns to the app by itself,
+ * mobile money by approving the operator prompt on the phone. The payment is then confirmed,
+ * polling while the gateway settles — longer for mobile money, where the buyer types a PIN.
  */
 export function usePayOrder(orderId: string, billingName?: string) {
   const storeOrder = useStoreOrder();
   return useMutation({
-    mutationFn: async (method: PaymentMethod) => {
-      const result = await ordersApi.pay(orderId, method);
+    mutationFn: async ({ method, phone }: { method: PaymentMethod; phone?: string }) => {
+      const result = await ordersApi.pay(orderId, method, phone);
       const { order } = result;
+      const mobileMoney = isMobileMoney(method);
 
       if (result.client_secret && result.publishable_key) {
         const paid = await payWithPaymentSheet({
@@ -99,18 +103,16 @@ export function usePayOrder(orderId: string, billingName?: string) {
         if (!paid) return order;
       } else if (result.redirect_url) {
         await openHostedCheckout(result.redirect_url);
-      } else {
+      } else if (!mobileMoney || order.status !== 'pending_payment') {
         return order;
       }
 
-      let current = (await ordersApi.confirmPayment(orderId).catch(() => ({ order }))).order;
-      for (
-        let attempt = 0;
-        current.status === 'pending_payment' && attempt < CONFIRMATION_ATTEMPTS;
-        attempt++
-      ) {
-        await wait(CONFIRMATION_INTERVAL);
-        current = (await ordersApi.show(orderId).catch(() => ({ order: current }))).order;
+      const attempts = mobileMoney ? MOBILE_MONEY_ATTEMPTS : CONFIRMATION_ATTEMPTS;
+      let current = order;
+      for (let attempt = 0; attempt < attempts; attempt++) {
+        if (attempt > 0 || mobileMoney) await wait(CONFIRMATION_INTERVAL);
+        current = (await ordersApi.confirmPayment(orderId).catch(() => ({ order: current }))).order;
+        if (current.status !== 'pending_payment') break;
       }
       return current;
     },

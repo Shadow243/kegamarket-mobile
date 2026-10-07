@@ -1,6 +1,11 @@
 import type { OrderStatus } from '@/types/api';
 
-import { matchesOrderFilter, orderStatusTone, orderTrackerStep } from './order-status';
+import {
+  isMobileMoney,
+  matchesOrderFilter,
+  orderStatusTone,
+  orderTrackerStep,
+} from './order-status';
 
 const order = (status: OrderStatus) => ({ status });
 
@@ -38,5 +43,15 @@ describe('orderStatusTone', () => {
     expect(orderStatusTone('completed')).toBe('success');
     expect(orderStatusTone('disputed')).toBe('danger');
     expect(orderStatusTone('cancelled')).toBe('neutral');
+  });
+});
+
+describe('isMobileMoney', () => {
+  it('flags the three DRC operators only', () => {
+    expect(['orange_money', 'airtel_money', 'mpesa'].every((m) => isMobileMoney(m as never))).toBe(
+      true,
+    );
+    expect(isMobileMoney('card')).toBe(false);
+    expect(isMobileMoney('cash')).toBe(false);
   });
 });

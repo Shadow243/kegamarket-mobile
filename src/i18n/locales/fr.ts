@@ -266,6 +266,12 @@ export const fr = {
     hintCash: 'À la livraison',
     payNow: 'Payer {{amount}}',
     awaitingConfirmation: 'Paiement en cours de confirmation…',
+    mobileMoneyPhone: 'Numéro mobile money',
+    mobileMoneyPhoneHint:
+      'Vous recevrez une demande de paiement sur ce numéro : validez-la avec votre code PIN.',
+    confirmOnPhone: 'Validez le paiement sur votre téléphone…',
+    paymentNotConfirmed:
+      'Paiement pas encore confirmé. Si vous l’avez validé, il apparaîtra dans quelques instants ; sinon, réessayez.',
     confirmReceipt: 'Confirmer la réception',
     confirmReceiptBody:
       'Confirmez uniquement si vous avez bien reçu l’article : les fonds seront versés au vendeur.',

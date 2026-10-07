@@ -105,7 +105,7 @@ export const ordersApi = {
     request<OrderResponse>('/orders', { method: 'POST', body: { listing_id: listingId } }),
   setDeliveryAddress: (id: string, body: { address_id: string } | DeliveryAddressFields) =>
     request<OrderResponse>(`/orders/${id}/delivery-address`, { method: 'POST', body }),
-  pay: (id: string, paymentMethod: PaymentMethod) =>
+  pay: (id: string, paymentMethod: PaymentMethod, phone?: string) =>
     request<
       OrderResponse & {
         redirect_url: string | null;
@@ -114,7 +114,7 @@ export const ordersApi = {
       }
     >(`/orders/${id}/pay`, {
       method: 'POST',
-      body: { payment_method: paymentMethod, channel: 'app' },
+      body: { payment_method: paymentMethod, channel: 'app', phone },
     }),
   confirmPayment: (id: string) =>
     request<OrderResponse>(`/orders/${id}/confirm-payment`, { method: 'POST' }),

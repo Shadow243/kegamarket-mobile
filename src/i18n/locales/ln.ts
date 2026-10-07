@@ -259,6 +259,11 @@ export const ln: TranslationResource = {
     hintCash: 'Na livraison',
     payNow: 'Futa {{amount}}',
     awaitingConfirmation: 'Kofuta ezali kondimama…',
+    mobileMoneyPhone: 'Numéro mobile money',
+    mobileMoneyPhoneHint: 'Okozwa demande ya kofuta na numéro oyo : ndima yango na code PIN na yo.',
+    confirmOnPhone: 'Ndima kofuta na telefone na yo…',
+    paymentNotConfirmed:
+      'Kofuta endimami naino te. Soki ondimi yango, ekomonana mosika te ; soki te, meka lisusu.',
     confirmReceipt: 'Yebisa ete ozwi',
     confirmReceiptBody: 'Yebisa kaka soki ozwi eloko : mbongo ekopesama na moteki.',
     disputeButton: 'Yebisa likambo',

@@ -13,14 +13,16 @@ import { Pressable, View } from 'react-native';
 import { Button } from '@/components/button';
 import { FormMessage } from '@/components/form-message';
 import { Text } from '@/components/text';
+import { TextField } from '@/components/text-field';
 import { useIsOnline } from '@/hooks/use-is-online';
 import { useLocale } from '@/hooks/use-locale';
 import { usePayOrder } from '@/hooks/use-orders';
-import { errorMessage } from '@/lib/api/errors';
+import { errorMessage, isApiError } from '@/lib/api/errors';
 import { night, palette } from '@/theme';
 import type { Order, PaymentMethod } from '@/types/api';
 import { cn } from '@/utils/cn';
 import { formatPrice } from '@/utils/format';
+import { isMobileMoney } from '@/utils/order-status';
 
 // Operator brand colors, only used for the small method logos.
 const METHODS: { value: PaymentMethod; hint: string; color: string; icon: LucideIcon }[] = [
@@ -38,6 +40,15 @@ export function PaymentStep({ order }: { order: Order }) {
   const isOnline = useIsOnline();
   const pay = usePayOrder(order.id, order.delivery_address.recipient_name ?? undefined);
   const [method, setMethod] = useState<PaymentMethod>('orange_money');
+  const [phone, setPhone] = useState(order.delivery_address.recipient_phone ?? '');
+  const mobileMoney = isMobileMoney(method);
+
+  const phoneError = isApiError(pay.error) ? pay.error.firstFieldError('phone') : undefined;
+  const generalError =
+    pay.isError && !phoneError
+      ? errorMessage(pay.error, t('common.genericError'), t('common.networkError'))
+      : null;
+  const notConfirmed = pay.isSuccess && pay.data.status === 'pending_payment';
 
   return (
     <View>
@@ -85,12 +96,32 @@ export function PaymentStep({ order }: { order: Order }) {
         })}
       </View>
 
-      {pay.isError ? (
-        <View className="mt-4">
-          <FormMessage
-            type="error"
-            message={errorMessage(pay.error, t('common.genericError'), t('common.networkError'))}
+      {mobileMoney ? (
+        <View className="mt-5">
+          <TextField
+            label={t('orders.mobileMoneyPhone')}
+            placeholder="0812345678"
+            keyboardType="phone-pad"
+            autoComplete="tel"
+            textContentType="telephoneNumber"
+            value={phone}
+            onChangeText={setPhone}
+            error={phoneError}
           />
+          <Text variant="caption" tone="muted" className="mt-1.5 text-[12px]">
+            {t('orders.mobileMoneyPhoneHint')}
+          </Text>
+        </View>
+      ) : null}
+
+      {generalError ? (
+        <View className="mt-4">
+          <FormMessage type="error" message={generalError} />
+        </View>
+      ) : null}
+      {notConfirmed && !pay.isPending ? (
+        <View className="mt-4">
+          <FormMessage type="error" message={t('orders.paymentNotConfirmed')} />
         </View>
       ) : null}
       {!isOnline ? (
@@ -102,13 +133,17 @@ export function PaymentStep({ order }: { order: Order }) {
       <Button
         title={
           pay.isPending
-            ? t('orders.awaitingConfirmation')
+            ? mobileMoney
+              ? t('orders.confirmOnPhone')
+              : t('orders.awaitingConfirmation')
             : t('orders.payNow', { amount: formatPrice(order.price, order.currency, locale) })
         }
         size="lg"
         loading={pay.isPending}
         disabled={!isOnline}
-        onPress={() => !pay.isPending && pay.mutate(method)}
+        onPress={() =>
+          !pay.isPending && pay.mutate({ method, phone: mobileMoney ? phone : undefined })
+        }
         className="mt-6"
       />
     </View>

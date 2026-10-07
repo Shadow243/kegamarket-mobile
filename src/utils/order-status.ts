@@ -1,4 +1,4 @@
-import type { Order, OrderStatus } from '@/types/api';
+import type { Order, OrderStatus, PaymentMethod } from '@/types/api';
 
 export type OrderFilter = 'all' | 'active' | 'completed' | 'disputed';
 
@@ -50,4 +50,11 @@ export function orderStatusTone(status: OrderStatus): StatusTone {
 
 export function isOrderActionable(status: OrderStatus): boolean {
   return status === 'pending_payment' || status === 'paid_escrow';
+}
+
+const MOBILE_MONEY: PaymentMethod[] = ['orange_money', 'airtel_money', 'mpesa'];
+
+/** Paid by approving a prompt on the buyer's phone, so the app needs their number. */
+export function isMobileMoney(method: PaymentMethod): boolean {
+  return MOBILE_MONEY.includes(method);
 }

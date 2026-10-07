@@ -260,6 +260,11 @@ export const en: TranslationResource = {
     hintCash: 'On delivery',
     payNow: 'Pay {{amount}}',
     awaitingConfirmation: 'Confirming payment…',
+    mobileMoneyPhone: 'Mobile money number',
+    mobileMoneyPhoneHint: 'You’ll get a payment request on this number: approve it with your PIN.',
+    confirmOnPhone: 'Approve the payment on your phone…',
+    paymentNotConfirmed:
+      'Payment not confirmed yet. If you approved it, it will show up in a moment; otherwise, try again.',
     confirmReceipt: 'Confirm receipt',
     confirmReceiptBody:
       'Only confirm once you have the item: the funds will be released to the seller.',
