@@ -1,0 +1,72 @@
+import '@/global.css';
+import '@/lib/nativewind-interop';
+
+import { BricolageGrotesque_600SemiBold } from '@expo-google-fonts/bricolage-grotesque/600SemiBold';
+import { BricolageGrotesque_700Bold } from '@expo-google-fonts/bricolage-grotesque/700Bold';
+import { BricolageGrotesque_800ExtraBold } from '@expo-google-fonts/bricolage-grotesque/800ExtraBold';
+import { Manrope_400Regular } from '@expo-google-fonts/manrope/400Regular';
+import { Manrope_500Medium } from '@expo-google-fonts/manrope/500Medium';
+import { Manrope_600SemiBold } from '@expo-google-fonts/manrope/600SemiBold';
+import { Manrope_700Bold } from '@expo-google-fonts/manrope/700Bold';
+import { useFonts } from 'expo-font';
+import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
+
+import { AppProviders } from '@/components/app-providers';
+import { OfflineBanner } from '@/components/offline-banner';
+import { useScheme } from '@/hooks/use-theme';
+import { useAuthStore } from '@/stores/auth-store';
+import { usePreferencesHydrated } from '@/stores/preferences-store';
+
+SplashScreen.preventAutoHideAsync();
+
+export default function RootLayout() {
+  const [fontsLoaded, fontError] = useFonts({
+    BricolageGrotesque_600SemiBold,
+    BricolageGrotesque_700Bold,
+    BricolageGrotesque_800ExtraBold,
+    Manrope_400Regular,
+    Manrope_500Medium,
+    Manrope_600SemiBold,
+    Manrope_700Bold,
+  });
+  const authReady = useAuthStore((state) => state.status === 'ready');
+  const preferencesReady = usePreferencesHydrated();
+
+  useEffect(() => {
+    useAuthStore.getState().hydrate();
+  }, []);
+
+  // Never route on unhydrated state: keep the splash until session and preferences are known.
+  const ready = (fontsLoaded || fontError !== null) && authReady && preferencesReady;
+
+  useEffect(() => {
+    if (ready) SplashScreen.hideAsync();
+  }, [ready]);
+
+  if (!ready) return null;
+
+  return (
+    <AppProviders>
+      <RootStack />
+      <OfflineBanner />
+    </AppProviders>
+  );
+}
+
+function RootStack() {
+  const scheme = useScheme();
+
+  return (
+    <>
+      <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="listing/[slug]" />
+        <Stack.Screen name="login" options={{ presentation: 'modal' }} />
+      </Stack>
+    </>
+  );
+}

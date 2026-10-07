@@ -1,0 +1,163 @@
+import { useIsFetching, useQueryClient } from '@tanstack/react-query';
+import { Image } from 'expo-image';
+import { useRouter } from 'expo-router';
+import { CloudOff, PackageOpen, Search } from 'lucide-react-native';
+import { useTranslation } from 'react-i18next';
+import { Pressable, RefreshControl, ScrollView, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+import { InlineNotice } from '@/components/inline-notice';
+import { ListingCard, ListingCardSkeleton } from '@/components/listing-card';
+import { SectionHeader } from '@/components/section-header';
+import { StateView } from '@/components/state-view';
+import { Text } from '@/components/text';
+import { useCategories } from '@/hooks/use-catalog';
+import { useIsOnline } from '@/hooks/use-is-online';
+import { useListingCards } from '@/hooks/use-listing-cards';
+import { useListingFeed } from '@/hooks/use-listings';
+import { useThemeColors } from '@/hooks/use-theme';
+import type { ListingSort } from '@/lib/api/endpoints';
+
+import { CategoryStrip } from './category-strip';
+import { EscrowCard } from './escrow-card';
+import { ListingRail } from './listing-rail';
+
+const logo = require('@/assets/images/logo-kega.png');
+
+export function Home() {
+  const { t } = useTranslation();
+  const router = useRouter();
+  const colors = useThemeColors();
+  const queryClient = useQueryClient();
+  const isOnline = useIsOnline();
+
+  const categories = useCategories();
+  const recent = useListingFeed({});
+  const deals = useListingFeed({ on_sale: true });
+  const popular = useListingFeed({ sort: 'most_viewed' });
+
+  const recentCards = useListingCards(recent.data);
+  const dealCards = useListingCards(deals.data);
+  const popularCards = useListingCards(popular.data);
+  const isRefreshing = useIsFetching({ queryKey: ['listings'] }) > 0 && !recent.isLoading;
+
+  const openSearch = (params: { category?: string; sort?: ListingSort; on_sale?: string } = {}) =>
+    router.push({ pathname: '/search', params });
+
+  const refresh = () =>
+    Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['listings'] }),
+      queryClient.invalidateQueries({ queryKey: ['categories'] }),
+    ]);
+
+  const hasNoData = recent.data === undefined;
+  const showBlockingState = hasNoData && !recent.isLoading;
+
+  return (
+    <SafeAreaView edges={['top']} className="flex-1 bg-canvas">
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={refresh}
+            tintColor={colors.brand}
+            colors={[colors.brand]}
+          />
+        }
+        contentContainerClassName="pb-8"
+      >
+        <View className="flex-row items-center justify-between px-4 pb-4 pt-2">
+          <Image
+            source={logo}
+            className="h-7 w-[96px]"
+            contentFit="contain"
+            accessibilityLabel="Kega"
+          />
+        </View>
+
+        <Pressable
+          accessibilityRole="search"
+          onPress={() => openSearch()}
+          className="mx-4 mb-6 h-[52px] flex-row items-center gap-3 rounded-2xl border border-line bg-surface px-4 active:opacity-80"
+          style={{ borderCurve: 'continuous' }}
+        >
+          <Search size={20} color={colors['fg-muted']} />
+          <Text tone="subtle">{t('home.searchPlaceholder')}</Text>
+        </Pressable>
+
+        <View className="mb-8">
+          <CategoryStrip
+            categories={categories.data}
+            isLoading={categories.isLoading}
+            onSelect={(slug) => openSearch({ category: slug })}
+          />
+        </View>
+
+        <EscrowCard />
+
+        {showBlockingState ? (
+          isOnline ? (
+            <StateView
+              icon={PackageOpen}
+              title={t('common.genericError')}
+              actionLabel={t('common.retry')}
+              onAction={() => recent.refetch()}
+            />
+          ) : (
+            <StateView icon={CloudOff} title={t('network.offlineUnavailable')} />
+          )
+        ) : (
+          <>
+            {recent.isError && !hasNoData ? (
+              <InlineNotice
+                message={t('network.staleData')}
+                actionLabel={t('common.retry')}
+                onAction={refresh}
+              />
+            ) : null}
+
+            <ListingRail
+              title={t('home.deals')}
+              listings={dealCards}
+              isLoading={deals.isLoading}
+              seeAllLabel={t('common.seeAll')}
+              onSeeAll={() => openSearch({ on_sale: '1' })}
+            />
+            <ListingRail
+              title={t('home.popular')}
+              listings={popularCards}
+              isLoading={popular.isLoading}
+              seeAllLabel={t('common.seeAll')}
+              onSeeAll={() => openSearch({ sort: 'most_viewed' })}
+            />
+
+            <SectionHeader
+              title={t('home.recent')}
+              actionLabel={t('common.seeAll')}
+              onAction={() => openSearch({ sort: 'newest' })}
+            />
+            {recent.isLoading ? (
+              <View className="flex-row flex-wrap justify-between gap-y-6 px-4">
+                {Array.from({ length: 4 }, (_, index) => (
+                  <View key={index} style={{ width: '48%' }}>
+                    <ListingCardSkeleton />
+                  </View>
+                ))}
+              </View>
+            ) : recentCards.length === 0 ? (
+              <StateView icon={PackageOpen} title={t('home.empty')} />
+            ) : (
+              <View className="flex-row flex-wrap justify-between gap-y-6 px-4">
+                {recentCards.map((listing) => (
+                  <View key={listing.id} style={{ width: '48%' }}>
+                    <ListingCard listing={listing} />
+                  </View>
+                ))}
+              </View>
+            )}
+          </>
+        )}
+      </ScrollView>
+    </SafeAreaView>
+  );
+}

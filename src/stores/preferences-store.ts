@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect, useState } from 'react';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
@@ -36,3 +37,13 @@ export const usePreferencesStore = create<PreferencesState>()(
     },
   ),
 );
+
+export function usePreferencesHydrated(): boolean {
+  const [hydrated, setHydrated] = useState(() => usePreferencesStore.persist.hasHydrated());
+  useEffect(() => {
+    const unsubscribe = usePreferencesStore.persist.onFinishHydration(() => setHydrated(true));
+    if (usePreferencesStore.persist.hasHydrated()) setHydrated(true);
+    return unsubscribe;
+  }, []);
+  return hydrated;
+}
