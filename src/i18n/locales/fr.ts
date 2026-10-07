@@ -5,6 +5,7 @@ export const fr = {
     search: 'Explorer',
     favorites: 'Favoris',
     account: 'Compte',
+    orders: 'Commandes',
   },
   common: {
     yes: 'Oui',
@@ -209,6 +210,8 @@ export const fr = {
   },
   orders: {
     title: 'Mes commandes',
+    guestTitle: 'Suivez vos commandes',
+    guestBody: 'Connectez-vous pour suivre vos achats, paiements et livraisons.',
     filterAll: 'Toutes',
     filterActive: 'En cours',
     filterCompleted: 'Terminées',

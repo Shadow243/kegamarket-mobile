@@ -92,7 +92,6 @@ function RootStack() {
             <Stack.Screen name="settings/security" />
             <Stack.Screen name="settings/verification" />
             <Stack.Screen name="settings/notifications" />
-            <Stack.Screen name="orders/index" />
             <Stack.Screen name="orders/[id]" />
             <Stack.Screen name="saved-searches" />
             <Stack.Screen name="applications" />

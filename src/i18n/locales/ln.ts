@@ -7,6 +7,7 @@ export const ln: TranslationResource = {
     search: 'Luka',
     favorites: 'Favoris',
     account: 'Compte',
+    orders: 'Ba commande',
   },
   common: {
     yes: 'Iyo',
@@ -205,6 +206,8 @@ export const ln: TranslationResource = {
   },
   orders: {
     title: 'Ba commande na ngai',
+    guestTitle: 'Landa ba commande na yo',
+    guestBody: 'Kota mpo na kolanda ba achat, ba paiement mpe ba livraison na yo.',
     filterAll: 'Nyonso',
     filterActive: 'Ezali kotambola',
     filterCompleted: 'Esili',

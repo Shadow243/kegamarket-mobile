@@ -1,5 +1,12 @@
 import { Tabs } from 'expo-router';
-import { Heart, House, MessageCircle, Search, type LucideIcon } from 'lucide-react-native';
+import {
+  Heart,
+  House,
+  MessageCircle,
+  Search,
+  ShoppingBag,
+  type LucideIcon,
+} from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
 import type { ColorValue } from 'react-native';
 
@@ -35,6 +42,10 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="favorites"
         options={{ title: t('tabs.favorites'), tabBarIcon: tabIcon(Heart) }}
+      />
+      <Tabs.Screen
+        name="orders"
+        options={{ title: t('tabs.orders'), tabBarIcon: tabIcon(ShoppingBag) }}
       />
     </Tabs>
   );

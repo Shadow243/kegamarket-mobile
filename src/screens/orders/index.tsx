@@ -7,8 +7,8 @@ import { FlatList, Pressable, RefreshControl, ScrollView, View } from 'react-nat
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Chip } from '@/components/chip';
+import { useTabBarSpace } from '@/components/floating-tab-bar';
 import { OrderTracker } from '@/components/order-tracker';
-import { ScreenHeader } from '@/components/screen-header';
 import { Skeleton } from '@/components/skeleton';
 import { StateView } from '@/components/state-view';
 import { StatusBadge } from '@/components/status-badge';
@@ -17,6 +17,7 @@ import { useIsOnline } from '@/hooks/use-is-online';
 import { useLocale } from '@/hooks/use-locale';
 import { useOrders } from '@/hooks/use-orders';
 import { useThemeColors } from '@/hooks/use-theme';
+import { useAuthStore } from '@/stores/auth-store';
 import type { Order } from '@/types/api';
 import { formatPrice, formatTimeAgo } from '@/utils/format';
 import {
@@ -88,6 +89,8 @@ export function Orders() {
   const colors = useThemeColors();
   const isOnline = useIsOnline();
   const orders = useOrders();
+  const bottomSpace = useTabBarSpace();
+  const isSignedIn = useAuthStore((state) => state.token !== null);
   const [filter, setFilter] = useState<OrderFilter>('all');
 
   const all = useMemo(() => orders.data ?? [], [orders.data]);
@@ -95,6 +98,30 @@ export function Orders() {
     () => all.filter((order) => matchesOrderFilter(order, filter)),
     [all, filter],
   );
+
+  const header = (
+    <View className="px-5 pt-2">
+      <Text variant="display" accessibilityRole="header">
+        {t('orders.title')}
+      </Text>
+    </View>
+  );
+
+  if (!isSignedIn) {
+    return (
+      <SafeAreaView edges={['top']} className="flex-1 bg-canvas">
+        {header}
+        <StateView
+          icon={ShoppingBag}
+          title={t('orders.guestTitle')}
+          body={t('orders.guestBody')}
+          actionLabel={t('auth.login')}
+          onAction={() => router.push('/login')}
+          className="flex-1 justify-center pb-32"
+        />
+      </SafeAreaView>
+    );
+  }
 
   const empty =
     orders.data === undefined && !isOnline ? (
@@ -116,8 +143,8 @@ export function Orders() {
     );
 
   return (
-    <SafeAreaView className="flex-1 bg-canvas">
-      <ScreenHeader title={t('orders.title')} />
+    <SafeAreaView edges={['top']} className="flex-1 bg-canvas">
+      {header}
       <View>
         <ScrollView
           horizontal
@@ -148,7 +175,8 @@ export function Orders() {
           renderItem={({ item }) => <OrderCard order={item} />}
           ItemSeparatorComponent={() => <View className="h-3" />}
           ListEmptyComponent={empty}
-          contentContainerClassName="px-5 pb-12 pt-2"
+          contentContainerClassName="px-5 pt-2"
+          contentContainerStyle={{ paddingBottom: bottomSpace }}
           refreshControl={
             <RefreshControl
               refreshing={orders.isRefetching}

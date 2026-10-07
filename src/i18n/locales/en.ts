@@ -7,6 +7,7 @@ export const en: TranslationResource = {
     search: 'Explore',
     favorites: 'Favorites',
     account: 'Account',
+    orders: 'Orders',
   },
   common: {
     yes: 'Yes',
@@ -205,6 +206,8 @@ export const en: TranslationResource = {
   },
   orders: {
     title: 'My orders',
+    guestTitle: 'Track your orders',
+    guestBody: 'Log in to follow your purchases, payments and deliveries.',
     filterAll: 'All',
     filterActive: 'In progress',
     filterCompleted: 'Completed',

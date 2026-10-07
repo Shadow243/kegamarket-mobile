@@ -12,7 +12,6 @@ import {
   LockKeyhole,
   LogOut,
   ShieldCheck,
-  ShoppingBag,
   SunMoon,
   UserRound,
 } from 'lucide-react-native';
@@ -146,11 +145,6 @@ export function Account() {
 
         {user ? (
           <ListGroup title={t('account.activity')}>
-            <ListRow
-              icon={ShoppingBag}
-              label={t('orders.title')}
-              onPress={() => router.push('/orders')}
-            />
             <ListRow
               icon={BriefcaseBusiness}
               label={t('applications.title')}
