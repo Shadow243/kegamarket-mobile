@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Kega",
-    "slug": "kega-mobile",
+    "slug": "kegamarket",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -42,6 +42,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "b088e1fe-d13a-4301-a7a8-792e9f7f4356"
+      }
+    },
+    "owner": "shadow243"
   }
 }
